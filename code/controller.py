@@ -16,4 +16,7 @@ class Controller:
                 self.player.move(1)
             elif keys[pg.K_LEFT]:
                 self.player.move(-1)
+            
+            if keys[pg.K_SPACE]:
+                self.player.shoot_laser()
 

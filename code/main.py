@@ -13,6 +13,7 @@ class Game:
     def run(self):
         self.controller.get_input()
         self.player.draw(screen)
+        self.player.update()
 
 
 if __name__ == '__main__':

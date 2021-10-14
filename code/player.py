@@ -13,9 +13,26 @@ class Player(pg.sprite.Sprite):
         self.speed = 3
         self.max_x = screen_width
 
+        self.laser_ready = True
+        self.laser_time = 0
+        self.laser_cd = 800
+
     def move(self, dir):
         if self.rect.x + self.dimensions[0] + dir * self.speed < self.max_x and self.rect.x + dir * self.speed > 0:
             self.rect.x += dir * self.speed
 
     def update(self):
-        pass
+        self.laser_reload()
+
+    def shoot_laser(self):
+        if self.laser_ready:
+            print('Shoot Laser')
+            self.laser_ready = False
+            self.laser_time = pg.time.get_ticks()
+
+
+    def laser_reload(self):
+        if not self.laser_ready:
+            if pg.time.get_ticks() - self.laser_time >= self.laser_cd:
+                self.laser_ready = True
+
