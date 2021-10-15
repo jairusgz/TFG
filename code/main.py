@@ -3,6 +3,7 @@ import sys
 from player import Player
 from pygame.locals import *
 from controller import *
+from laser import Laser
 
 class Game:
     def __init__(self):
@@ -11,6 +12,7 @@ class Game:
         self.controller = controller = Controller(player_sprite)
 
     def run(self):
+        self.player.sprite.lasers.draw(screen)
         self.controller.get_input()
         self.player.draw(screen)
         self.player.update()

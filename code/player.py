@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.locals import *
+from laser import Laser
 
 class Player(pg.sprite.Sprite):
 
@@ -13,6 +14,7 @@ class Player(pg.sprite.Sprite):
         self.speed = 3
         self.max_x = screen_width
 
+        self.lasers = pg.sprite.Group()
         self.laser_ready = True
         self.laser_time = 0
         self.laser_cd = 800
@@ -23,10 +25,11 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.laser_reload()
+        self.lasers.update()
 
     def shoot_laser(self):
         if self.laser_ready:
-            print('Shoot Laser')
+            self.lasers.add(Laser(self.rect.center))
             self.laser_ready = False
             self.laser_time = pg.time.get_ticks()
 
