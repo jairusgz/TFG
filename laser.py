@@ -2,11 +2,11 @@ import pygame as pg
 from constants import *
 
 class Laser(pg.sprite.Sprite):
-    def __init__(self, pos, speed=PLAYER_LASER_SPEED):
+    def __init__(self, pos, speed):
         super().__init__()
         self.image = pg.Surface((LASER_WIDTH, LASER_HEIGTH))
         self.image.fill('White')
-        self.rect = self.image.get_rect(center = pos)
+        self.rect = self.image.get_rect(center=pos)
         self.speed = speed
 
 
