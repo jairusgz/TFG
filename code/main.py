@@ -34,10 +34,17 @@ class Game:
         self.mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
         self.mothership_count = 0
 
+        # Sistema de vidas
+        self.lives = NUM_LIVES
+        self.lives_img = pygame.image.load('Resources/player.png').convert_alpha()
+        self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
+        self.lives_x_pos = LIVES_X_START
+
     def run(self):
         # self.speed_modifier += SPEED_INCREMENT
 
         self.collisions()
+        self.show_lives()
 
         self.player.update()
         self.aliens.update(self.alien_direction)
@@ -55,6 +62,12 @@ class Game:
         self.aliens.draw(screen)
         self.alien_lasers.draw(screen)
         self.mothership.draw(screen)
+
+    def show_lives(self):
+        x = self.lives_x_pos
+        for live in range(self.lives - 1):
+            x -= (live * LIVES_IMG_DIMENSIONS[0] + LIVES_SPACE)
+            screen.blit(self.lives_img, (x, LIVES_Y))
 
     def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
@@ -135,7 +148,7 @@ class Game:
                 # TODO Modificar la colision con el jugador cuando este implementado el sistema de vidas
                 if pg.sprite.spritecollide(laser, self.player, dokill=False):
                     laser.kill()
-                    print('Player hit')
+                    self.lives -= 1
 
                 # TODO Colision con los obstaculos
 
