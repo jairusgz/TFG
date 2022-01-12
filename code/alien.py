@@ -5,9 +5,9 @@ from os import path
 from constants import *
 import math
 
-filenames = {'red': os.path.join('../Resources', 'red.png'),
-             'yellow': os.path.join('../Resources', 'yellow.png'),
-             'green': os.path.join('../Resources', 'green.png')}
+filenames = {'red': os.path.join('Resources', 'red.png'),
+             'yellow': os.path.join('Resources', 'yellow.png'),
+             'green': os.path.join('Resources', 'green.png')}
 
 class Alien(pg.sprite.Sprite):
     def __init__(self, dimensions, color, x, y):
@@ -26,7 +26,7 @@ class Alien(pg.sprite.Sprite):
 class Mothership(pg.sprite.Sprite):
     def __init__(self, dimensions, side, speed):
         super().__init__()
-        self.image = pg.image.load('../Resources/extra.png').convert_alpha()
+        self.image = pg.image.load('Resources/extra.png').convert_alpha()
         self.image = pg.transform.scale(self.image, dimensions)
 
         if side == 'right':

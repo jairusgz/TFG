@@ -36,7 +36,7 @@ class Game:
         self.mothership_count = 0
 
     def run(self):
-        self.speed_modifier += SPEED_INCREMENT
+        # self.speed_modifier += SPEED_INCREMENT
 
         self.collisions()
 
@@ -118,19 +118,32 @@ class Game:
         # Player lasers
         if self.player.sprite.lasers:
             for laser in self.player.sprite.lasers:
+
+                # Colisiones con los aliens
                 if pg.sprite.spritecollide(laser, self.aliens, dokill=True):
                     laser.kill()
+                    self.speed_modifier = self.speed_modifier * SPEED_INCREMENT
+                    print(self.speed_modifier)
 
+                # Colisiones con la madre nodriza
                 if pg.sprite.spritecollide(laser, self.mothership, dokill=True):
                     laser.kill()
+
+                # TODO Colisiones con los obstaculos
+
+                # TODO Colisiones con los laseres de los aliens
+
 
         # Alien lasers
         if self.alien_lasers:
             for laser in self.alien_lasers:
+
+                # TODO Modificar la colision con el jugador cuando este implementado el sistema de vidas
                 if pg.sprite.spritecollide(laser, self.player, dokill=False):
                     laser.kill()
                     print('Player hit')
 
+                # TODO Colision con los obstaculos
 
 if __name__ == '__main__':
     pg.init()

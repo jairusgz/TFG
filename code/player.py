@@ -12,7 +12,7 @@ class Player(pg.sprite.Sprite):
         # por defecto la parte central inferior de la pantalla
 
         super().__init__()
-        self.image = pg.image.load('../Resources/player.png').convert_alpha()
+        self.image = pg.image.load('Resources/player.png').convert_alpha()
         self.image = pg.transform.scale(self.image, dimensions)
         self.rect = self.image.get_rect(midbottom=pos)
         self.dimensions = dimensions
