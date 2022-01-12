@@ -19,7 +19,6 @@ class Game:
         self.player = pg.sprite.GroupSingle(player_sprite)
         self.controller = controller = Controller(player_sprite)
 
-
         self.speed_modifier = 1
 
         # Aliens
@@ -56,7 +55,6 @@ class Game:
         self.aliens.draw(screen)
         self.alien_lasers.draw(screen)
         self.mothership.draw(screen)
-
 
     def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
@@ -97,8 +95,7 @@ class Game:
                 alien = choice(self.aliens.sprites())
                 laser = Laser(alien.rect.center, LASER_SPEED)
                 self.alien_lasers.add(laser)
-                self.shoot_timer = randint(round(MIN_LASER_CD / self.speed_modifier),
-                                           round(MAX_LASER_CD / self.speed_modifier))
+                self.shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
                 self.shoot_count = 0
 
             else:
@@ -131,9 +128,6 @@ class Game:
 
                 # TODO Colisiones con los obstaculos
 
-                # TODO Colisiones con los laseres de los aliens
-
-
         # Alien lasers
         if self.alien_lasers:
             for laser in self.alien_lasers:
@@ -144,6 +138,13 @@ class Game:
                     print('Player hit')
 
                 # TODO Colision con los obstaculos
+
+                # Colision entre laseres.
+                # El laser del jugador siempre se borra, y el del alien puede borrarse o continuar
+                if pg.sprite.spritecollide(laser, self.player.sprite.lasers, dokill=True):
+                    if choice([True, False]):
+                        laser.kill()
+
 
 if __name__ == '__main__':
     pg.init()
