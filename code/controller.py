@@ -1,6 +1,7 @@
 import pygame as pg
 from player import Player
 from pygame.locals import *
+from constants import *
 
 class Controller:
     def __init__(self, player, AI=False):
