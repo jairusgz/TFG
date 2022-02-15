@@ -1,7 +1,8 @@
 import pygame as pg
 import sys
-
+import pygame_menu
 import pygame.sprite
+from pygame_menu import Theme
 
 from player import Player
 from pygame.locals import *
@@ -15,9 +16,9 @@ from random import choice, randint
 class Game:
     def __init__(self):
         # Jugador y controlador para el juador y la IA
-        player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
-        self.player = pg.sprite.GroupSingle(player_sprite)
-        self.controller = controller = Controller(player_sprite)
+        self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
+        self.player = pg.sprite.GroupSingle(self.player_sprite)
+        self.controller = Controller(self.player_sprite)
 
         self.speed_modifier = 1
 
@@ -36,9 +37,12 @@ class Game:
 
         # Sistema de vidas
         self.lives = NUM_LIVES
-        self.lives_img = pygame.image.load('Resources/player.png').convert_alpha()
+        self.lives_img = pygame.image.load('../Resources/player.png').convert_alpha()
         self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
         self.lives_x_pos = LIVES_X_START
+
+    def set_player(self, player_value, player):
+        self.controller = Controller(self.player_sprite, player_value)
 
     def run(self):
         # self.speed_modifier += SPEED_INCREMENT
@@ -158,13 +162,8 @@ class Game:
                     if choice([True, False]):
                         laser.kill()
 
-
-if __name__ == '__main__':
-    pg.init()
-
-    screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
+def run_game(surface, game):
     clock = pg.time.Clock()
-    game = Game()
 
     while True:
         for e in pg.event.get():
@@ -172,7 +171,36 @@ if __name__ == '__main__':
                 pg.quit()
                 exit()
 
-        screen.fill([30, 30, 30])
+        surface.fill([30, 30, 30])
         game.run()
         pg.display.flip()
         clock.tick(60)
+
+def run_menu(surface, game):
+    font = pg.font.Font('../Resources/NES_Font.otf', 20)
+    custom_theme = pygame_menu.themes.THEME_DARK.copy()
+    custom_theme.title_font = font
+    custom_theme.widget_font = font
+
+    menu = pygame_menu.Menu(
+        height=300,
+        theme=custom_theme,
+        title='Select Player',
+        width=400
+    )
+
+    menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=game.set_player)
+    menu.add.button('Leaderboards')
+    menu.add.button('Play', lambda: run_game(surface, game))
+    menu.add.button('Quit', pygame_menu.events.EXIT)
+
+    menu.mainloop(surface)
+
+
+if __name__ == '__main__':
+    pg.init()
+    pg.display.set_caption('Space Invaders')
+    screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
+    game = Game()
+
+    run_menu(screen, game)

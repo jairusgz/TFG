@@ -1,5 +1,5 @@
 #Constantes Generales
-REESCALADO = 4
+REESCALADO = 3
 SPEED_INCREMENT = 1.02
 
 #Constantes de Pantalla

@@ -4,9 +4,9 @@ from pygame.locals import *
 from constants import *
 
 class Controller:
-    def __init__(self, player, AI=False):
+    def __init__(self, player, ai_player=False):
         self.player = player
-        self.AI = AI
+        self.AI = ai_player
 
     def get_input(self):
 
