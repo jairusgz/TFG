@@ -41,7 +41,7 @@ class Game:
         self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
         self.lives_x_pos = LIVES_X_START
 
-    def set_player(self, player_value, player):
+    def set_player(self, player, player_value):
         self.controller = Controller(self.player_sprite, player_value)
 
     def run(self):
@@ -190,7 +190,7 @@ def run_menu(surface, game):
     )
 
     menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=game.set_player)
-    menu.add.button('Leaderboards')
+    menu.add.button('Leaderboard')
     menu.add.button('Play', lambda: run_game(surface, game))
     menu.add.button('Quit', pygame_menu.events.EXIT)
 
