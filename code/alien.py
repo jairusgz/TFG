@@ -9,6 +9,7 @@ filenames = {'red': os.path.join('../Resources', 'red.png'),
              'yellow': os.path.join('../Resources', 'yellow.png'),
              'green': os.path.join('../Resources', 'green.png')}
 
+
 class Alien(pg.sprite.Sprite):
     def __init__(self, dimensions, color, x, y, score):
         super().__init__()

@@ -15,6 +15,10 @@ from random import choice, randint
 
 class Game:
     def __init__(self):
+
+        self.game_ended = False
+        self.final_screen = False
+
         # Jugador y controlador para el jugador y la IA
         self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
         self.player = pg.sprite.GroupSingle(self.player_sprite)
@@ -51,27 +55,31 @@ class Game:
 
     def run(self):
         # self.speed_modifier += SPEED_INCREMENT
+        if not self.final_screen:
+            self.collisions()
+            self.show_lives()
 
-        self.collisions()
-        self.show_lives()
+            self.player.update()
+            self.aliens.update(self.alien_direction)
+            self.alien_border_constraint()
+            self.alien_shoot()
 
-        self.player.update()
-        self.aliens.update(self.alien_direction)
-        self.alien_border_constraint()
-        self.alien_shoot()
+            self.mothership_spawn()
+            self.mothership.update()
 
-        self.mothership_spawn()
-        self.mothership.update()
+            self.player.sprite.lasers.draw(screen)
+            self.alien_lasers.update()
+            self.controller.get_input()
 
-        self.player.sprite.lasers.draw(screen)
-        self.alien_lasers.update()
-        self.controller.get_input()
+            self.player.draw(screen)
+            self.aliens.draw(screen)
+            self.alien_lasers.draw(screen)
+            self.mothership.draw(screen)
+            self.show_score()
 
-        self.player.draw(screen)
-        self.aliens.draw(screen)
-        self.alien_lasers.draw(screen)
-        self.mothership.draw(screen)
-        self.show_score()
+        else:
+            self.show_score()
+            self.show_final_screen()
 
     def show_lives(self):
         x = self.lives_x_pos
@@ -80,7 +88,7 @@ class Game:
             screen.blit(self.lives_img, (x, LIVES_Y))
 
     def show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', 20).render('SCORE: ' + str(self.score), False, 'white')
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render('SCORE: ' + str(self.score), False, 'white')
         score_rect = score_surf.get_rect(topleft=[0, 0])
         screen.blit(score_surf, score_rect)
 
@@ -153,21 +161,17 @@ class Game:
                     self.score += alien_collisions[0].alien_score()
                     laser.kill()
                     self.speed_modifier = self.speed_modifier * SPEED_INCREMENT
-                    # TODO eliminar el print de debug
-                    print(self.score)
 
                 # Colisiones con la madre nodriza
                 if pg.sprite.spritecollide(laser, self.mothership, dokill=True):
                     laser.kill()
                     self.score += self.calculate_mothership_value()
-                    print(self.score)
+
                 # TODO Colisiones con los obstaculos
 
         # Alien lasers
         if self.alien_lasers:
             for laser in self.alien_lasers:
-
-                # TODO Modificar la colision con el jugador cuando este implementado el sistema de vidas
                 if pg.sprite.spritecollide(laser, self.player, dokill=False):
                     laser.kill()
                     if self.lives > 1:
@@ -198,14 +202,21 @@ class Game:
 
     def game_over(self):
         #TODO Comprobar la score y añadir a leaderboard si esta en el top
+        self.final_screen = True
 
+    def show_final_screen(self):
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', 40).render('GAME OVER', False, 'red')
+        final_rect = final_surf.get_rect(center=FINAL_SCORE_CENTER_POS)
+        screen.blit(final_surf, final_rect)
         keys = pg.key.get_pressed()
+        if keys[pg.K_ESCAPE]:
+            self.game_ended = True
 
 
 def run_game(surface, game):
     clock = pg.time.Clock()
 
-    while True:
+    while not game.game_ended:
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -240,8 +251,9 @@ def run_menu(surface, game):
 
 if __name__ == '__main__':
     pg.init()
-    pg.display.set_caption('Space Invaders')
-    screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
-    game = Game()
+    while True:
+        pg.display.set_caption('Space Invaders')
+        screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
+        game = Game()
 
-    run_menu(screen, game)
+        run_menu(screen, game)
