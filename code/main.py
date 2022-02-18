@@ -3,6 +3,7 @@ import sys
 import pygame_menu
 import pygame.sprite
 from pygame_menu import Theme
+from time import sleep
 
 from player import Player
 from pygame.locals import *
@@ -16,16 +17,16 @@ from random import choice, randint
 class Game:
     def __init__(self):
 
-        self.game_ended = False
-        self.final_screen = False
+        #Status of the game
+        self.level = 1
+        self.game_status = Game_status.PLAYABLE_SCREEN
+        self.speed_modifier = 1
+        self.countdown_active = False
 
-        # Jugador y controlador para el jugador y la IA
+        # Player and controller
         self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
         self.player = pg.sprite.GroupSingle(self.player_sprite)
         self.controller = Controller(self.player_sprite)
-
-        #Velocidad del juego
-        self.speed_modifier = 1
 
         # Aliens
         self.aliens = pg.sprite.Group()
@@ -41,21 +42,20 @@ class Game:
         self.mothership_count = 0
         self.mothership_score = 70
 
-        # Sistema de vidas
+        # Life system
         self.lives = NUM_LIVES
         self.lives_img = pygame.image.load('../Resources/player.png').convert_alpha()
         self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
         self.lives_x_pos = LIVES_X_START
 
-        #Sistema de puntuacion
+        # Score system
         self.score = 0
 
     def set_player(self, player, player_value):
         self.controller = Controller(self.player_sprite, player_value)
 
     def run(self):
-        # self.speed_modifier += SPEED_INCREMENT
-        if not self.final_screen:
+        if self.game_status == Game_status.PLAYABLE_SCREEN:
             self.collisions()
             self.show_lives()
 
@@ -77,9 +77,10 @@ class Game:
             self.mothership.draw(screen)
             self.show_score()
 
-        else:
+        elif self.game_status == Game_status.FINAL_SCREEN:
             self.show_score()
             self.show_final_screen()
+
 
     def show_lives(self):
         x = self.lives_x_pos
@@ -202,21 +203,22 @@ class Game:
 
     def game_over(self):
         #TODO Comprobar la score y añadir a leaderboard si esta en el top
-        self.final_screen = True
+        self.game_status = Game_status.FINAL_SCREEN
+
 
     def show_final_screen(self):
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', 40).render('GAME OVER', False, 'red')
-        final_rect = final_surf.get_rect(center=FINAL_SCORE_CENTER_POS)
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
+        final_rect = final_surf.get_rect(center=GAME_OVER_CENTER_POS)
         screen.blit(final_surf, final_rect)
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
-            self.game_ended = True
+            self.game_status = Game_status.GAME_OVER
 
 
 def run_game(surface, game):
     clock = pg.time.Clock()
 
-    while not game.game_ended:
+    while game.game_status != Game_status.GAME_OVER:
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
