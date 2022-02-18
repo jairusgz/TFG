@@ -23,6 +23,7 @@ class Player(pg.sprite.Sprite):
         self.laser_ready = True
         self.laser_time = 0
         self.laser_cd = PLAYER_LASER_CD
+        self.laser_count = 0
 
     def move(self, dir):
         if self.rect.x + self.dimensions[0] + dir * self.speed < self.max_x and self.rect.x + dir * self.speed > 0:
@@ -37,8 +38,12 @@ class Player(pg.sprite.Sprite):
             self.lasers.add(Laser(self.rect.center, -LASER_SPEED))
             self.laser_ready = False
             self.laser_time = pg.time.get_ticks()
+            self.laser_count += 1
 
     def laser_reload(self):
         if not self.laser_ready:
             if pg.time.get_ticks() - self.laser_time >= self.laser_cd:
                 self.laser_ready = True
+
+    def get_laser_count(self):
+        return self.laser_count

@@ -15,11 +15,12 @@ from random import choice, randint
 
 class Game:
     def __init__(self):
-        # Jugador y controlador para el juador y la IA
+        # Jugador y controlador para el jugador y la IA
         self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
         self.player = pg.sprite.GroupSingle(self.player_sprite)
         self.controller = Controller(self.player_sprite)
 
+        #Velocidad del juego
         self.speed_modifier = 1
 
         # Aliens
@@ -34,12 +35,16 @@ class Game:
         self.mothership = pygame.sprite.GroupSingle()
         self.mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
         self.mothership_count = 0
+        self.mothership_score = 70
 
         # Sistema de vidas
         self.lives = NUM_LIVES
         self.lives_img = pygame.image.load('../Resources/player.png').convert_alpha()
         self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
         self.lives_x_pos = LIVES_X_START
+
+        #Sistema de puntuacion
+        self.score = 0
 
     def set_player(self, player, player_value):
         self.controller = Controller(self.player_sprite, player_value)
@@ -66,12 +71,18 @@ class Game:
         self.aliens.draw(screen)
         self.alien_lasers.draw(screen)
         self.mothership.draw(screen)
+        self.show_score()
 
     def show_lives(self):
         x = self.lives_x_pos
         for live in range(self.lives - 1):
             x -= (live * LIVES_IMG_DIMENSIONS[0] + LIVES_SPACE)
             screen.blit(self.lives_img, (x, LIVES_Y))
+
+    def show_score(self):
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', 20).render('SCORE: ' + str(self.score), False, 'white')
+        score_rect = score_surf.get_rect(topleft=[0, 0])
+        screen.blit(score_surf, score_rect)
 
     def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
@@ -80,12 +91,15 @@ class Game:
 
                 if r < 1:
                     color = 'yellow'
+                    value = 30
                 elif r < 3:
                     color = 'green'
+                    value = 20
                 else:
                     color = 'red'
+                    value = 10
 
-                alien = Alien(ALIEN_IMAGE_SIZE, color, x_coord, y_coord)
+                alien = Alien(ALIEN_IMAGE_SIZE, color, x_coord, y_coord, value)
                 self.aliens.add(alien)
                 x_coord += x_spacing
             y_coord += y_spacing
@@ -134,15 +148,19 @@ class Game:
             for laser in self.player.sprite.lasers:
 
                 # Colisiones con los aliens
-                if pg.sprite.spritecollide(laser, self.aliens, dokill=True):
+                alien_collisions = pg.sprite.spritecollide(laser, self.aliens, dokill=True)
+                if alien_collisions:
+                    self.score += alien_collisions[0].alien_score()
                     laser.kill()
                     self.speed_modifier = self.speed_modifier * SPEED_INCREMENT
-                    print(self.speed_modifier)
+                    # TODO eliminar el print de debug
+                    print(self.score)
 
                 # Colisiones con la madre nodriza
                 if pg.sprite.spritecollide(laser, self.mothership, dokill=True):
                     laser.kill()
-
+                    self.score += self.calculate_mothership_value()
+                    print(self.score)
                 # TODO Colisiones con los obstaculos
 
         # Alien lasers
@@ -152,7 +170,10 @@ class Game:
                 # TODO Modificar la colision con el jugador cuando este implementado el sistema de vidas
                 if pg.sprite.spritecollide(laser, self.player, dokill=False):
                     laser.kill()
-                    self.lives -= 1
+                    if self.lives > 1:
+                        self.lives -= 1
+                    else:
+                        self.game_over()
 
                 # TODO Colision con los obstaculos
 
@@ -161,6 +182,25 @@ class Game:
                 if pg.sprite.spritecollide(laser, self.player.sprite.lasers, dokill=True):
                     if choice([True, False]):
                         laser.kill()
+
+    def calculate_mothership_value(self):
+        '''
+        The score of the mothership is controlled by the number of shots fired by the player before the mothership is shot.
+        It reaches its max value (300) on the 23rd shot and every 15th shot, according to
+        http://www.classicgaming.cc/classics/space-invaders/play-guide
+        '''
+
+        if self.player_sprite.get_laser_count() <= 23:
+            return 70 + self.player_sprite.get_laser_count() * 10
+        else:
+            return 150 + ((self.player_sprite.get_laser_count() - 23) % 16) * 10
+
+
+    def game_over(self):
+        #TODO Comprobar la score y añadir a leaderboard si esta en el top
+
+        keys = pg.key.get_pressed()
+
 
 def run_game(surface, game):
     clock = pg.time.Clock()
@@ -175,6 +215,7 @@ def run_game(surface, game):
         game.run()
         pg.display.flip()
         clock.tick(60)
+
 
 def run_menu(surface, game):
     font = pg.font.Font('../Resources/NES_Font.otf', 20)
