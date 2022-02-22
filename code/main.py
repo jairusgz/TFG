@@ -3,6 +3,7 @@ import sys
 import pygame_menu
 import pygame.sprite
 from pygame_menu import Theme
+from pygame_menu.widgets import Selector
 from time import sleep
 
 from player import Player
@@ -15,9 +16,9 @@ from random import choice, randint
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, ai=False):
 
-        #Status of the game
+        # Status of the game
         self.level = 1
         self.game_status = Game_status.PLAYABLE_SCREEN
         self.speed_modifier = 1
@@ -26,7 +27,7 @@ class Game:
         # Player and controller
         self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
         self.player = pg.sprite.GroupSingle(self.player_sprite)
-        self.controller = Controller(self.player_sprite)
+        self.controller = Controller(self.player_sprite, ai_player=ai)
 
         # Aliens
         self.aliens = pg.sprite.Group()
@@ -50,9 +51,6 @@ class Game:
 
         # Score system
         self.score = 0
-
-    def set_player(self, player, player_value):
-        self.controller = Controller(self.player_sprite, player_value)
 
     def run(self):
         if self.game_status == Game_status.PLAYABLE_SCREEN:
@@ -81,7 +79,6 @@ class Game:
             self.show_score()
             self.show_final_screen()
 
-
     def show_lives(self):
         x = self.lives_x_pos
         for live in range(self.lives - 1):
@@ -89,7 +86,8 @@ class Game:
             screen.blit(self.lives_img, (x, LIVES_Y))
 
     def show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render('SCORE: ' + str(self.score), False, 'white')
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render('SCORE: ' + str(self.score),
+                                                                                       False, 'white')
         score_rect = score_surf.get_rect(topleft=[0, 0])
         screen.blit(score_surf, score_rect)
 
@@ -200,11 +198,9 @@ class Game:
         else:
             return 150 + ((self.player_sprite.get_laser_count() - 23) % 16) * 10
 
-
     def game_over(self):
-        #TODO Comprobar la score y añadir a leaderboard si esta en el top
+        # TODO Comprobar la score y añadir a leaderboard si esta en el top
         self.game_status = Game_status.FINAL_SCREEN
-
 
     def show_final_screen(self):
         final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
@@ -213,6 +209,34 @@ class Game:
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
             self.game_status = Game_status.GAME_OVER
+
+
+class Menu:
+
+    def __init__(self, surface):
+        self.surface = surface
+        self.ia_player = False
+        self.font = pg.font.Font('../Resources/NES_Font.otf', 20)
+        self.custom_theme = pygame_menu.themes.THEME_DARK.copy()
+        self.custom_theme.title_font = self.font
+        self.custom_theme.widget_font = self.font
+        self.menu = pygame_menu.Menu(
+            height=300,
+            theme=self.custom_theme,
+            title='Select Player',
+            width=400
+        )
+
+        self.menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=self.change_player)
+        self.menu.add.button('Leaderboard')
+        self.menu.add.button('Play', lambda: run_game(surface, Game(self.ia_player)))
+        self.menu.add.button('Quit', pygame_menu.events.EXIT)
+
+    def run(self):
+        self.menu.mainloop(self.surface)
+
+    def change_player(self, values, selected_value):
+        self.ia_player = selected_value
 
 
 def run_game(surface, game):
@@ -230,32 +254,11 @@ def run_game(surface, game):
         clock.tick(60)
 
 
-def run_menu(surface, game):
-    font = pg.font.Font('../Resources/NES_Font.otf', 20)
-    custom_theme = pygame_menu.themes.THEME_DARK.copy()
-    custom_theme.title_font = font
-    custom_theme.widget_font = font
-
-    menu = pygame_menu.Menu(
-        height=300,
-        theme=custom_theme,
-        title='Select Player',
-        width=400
-    )
-
-    menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=game.set_player)
-    menu.add.button('Leaderboard')
-    menu.add.button('Play', lambda: run_game(surface, game))
-    menu.add.button('Quit', pygame_menu.events.EXIT)
-
-    menu.mainloop(surface)
-
-
 if __name__ == '__main__':
     pg.init()
     while True:
         pg.display.set_caption('Space Invaders')
         screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
-        game = Game()
+        menu = Menu(screen)
 
-        run_menu(screen, game)
+        menu.run()
