@@ -5,18 +5,29 @@ import pygame.sprite
 from pygame_menu import Theme
 from pygame_menu.widgets import Selector
 from time import sleep
-
 from player import Player
 from pygame.locals import *
 from controller import *
 from laser import Laser
-from constants import *
+from constants_general import *
 from alien import Alien, Mothership
 from random import choice, randint
 
 
 class Game:
-    def __init__(self, ai=False, name='AI'):
+    def __init__(self, surface, ai=False, name='AI'):
+        print(ai)
+        global ct
+        if ai:
+            import constants_ai as ct
+        else:
+            import constants_player as ct
+
+        #Screen
+        if ai:
+            self.surface = pg.display.set_mode(ct.SCREEN_RES)
+        else:
+            self.surface = surface
 
         # Status of the game
         self.level = 1
@@ -26,15 +37,16 @@ class Game:
         self.player_name = name
 
         # Player and controller
-        self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
+        self.player_sprite = Player(ct.PLAYER_START_POS, (ct.PLAYER_WIDTH, ct.PLAYER_HEIGTH))
         self.player = pg.sprite.GroupSingle(self.player_sprite)
         self.controller = Controller(self.player_sprite, ai_player=ai)
 
         # Aliens
         self.aliens = pg.sprite.Group()
         self.alien_lasers = pygame.sprite.Group()
-        self.alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ALIEN_START_POS, ALIEN_X_SPACING, ALIEN_Y_SPACING)
-        self.alien_direction = ALIEN_X_SPEED
+        self.alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
+                         ct.ALIEN_Y_SPACING)
+        self.alien_direction = ct.ALIEN_X_SPEED
         self.shoot_count = 0
         self.shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
 
@@ -47,8 +59,8 @@ class Game:
         # Life system
         self.lives = NUM_LIVES
         self.lives_img = pygame.image.load('../Resources/player.png').convert_alpha()
-        self.lives_img = pg.transform.scale(self.lives_img, LIVES_IMG_DIMENSIONS)
-        self.lives_x_pos = LIVES_X_START
+        self.lives_img = pg.transform.scale(self.lives_img, ct.LIVES_IMG_DIMENSIONS)
+        self.lives_x_pos = ct.LIVES_X_START
 
         # Score system
         self.score = 0
@@ -66,14 +78,14 @@ class Game:
             self.mothership_spawn()
             self.mothership.update()
 
-            self.player.sprite.lasers.draw(screen)
+            self.player.sprite.lasers.draw(self.surface)
             self.alien_lasers.update()
             self.controller.get_input()
 
-            self.player.draw(screen)
-            self.aliens.draw(screen)
-            self.alien_lasers.draw(screen)
-            self.mothership.draw(screen)
+            self.player.draw(self.surface)
+            self.aliens.draw(self.surface)
+            self.alien_lasers.draw(self.surface)
+            self.mothership.draw(self.surface)
             self.show_score()
 
         elif self.game_status == Game_status.FINAL_SCREEN:
@@ -83,14 +95,14 @@ class Game:
     def show_lives(self):
         x = self.lives_x_pos
         for live in range(self.lives - 1):
-            x -= (live * LIVES_IMG_DIMENSIONS[0] + LIVES_SPACE)
-            screen.blit(self.lives_img, (x, LIVES_Y))
+            x -= (live * ct.LIVES_IMG_DIMENSIONS[0] + ct.LIVES_SPACE)
+            self.surface.blit(self.lives_img, (x, ct.LIVES_Y))
 
     def show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render('SCORE: ' + str(self.score),
-                                                                                       False, 'white')
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render('SCORE: ' + str(self.score),
+                                                                                          False, 'white')
         score_rect = score_surf.get_rect(topleft=[0, 0])
-        screen.blit(score_surf, score_rect)
+        self.surface.blit(score_surf, score_rect)
 
     def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
@@ -107,7 +119,7 @@ class Game:
                     color = 'red'
                     value = 10
 
-                alien = Alien(ALIEN_IMAGE_SIZE, color, x_coord, y_coord, value)
+                alien = Alien(ct.ALIEN_IMAGE_SIZE, color, x_coord, y_coord, value)
                 self.aliens.add(alien)
                 x_coord += x_spacing
             y_coord += y_spacing
@@ -116,12 +128,12 @@ class Game:
     def alien_border_constraint(self):
         aliens = self.aliens.sprites()
         for alien in aliens:
-            if alien.rect.right >= SCREEN_WIDTH:
-                self.alien_direction = - ALIEN_X_SPEED * self.speed_modifier
-                self.alien_hit_border(ALIEN_Y_SPEED)
+            if alien.rect.right >= ct.SCREEN_WIDTH:
+                self.alien_direction = - ct.ALIEN_X_SPEED * self.speed_modifier
+                self.alien_hit_border(ct.ALIEN_Y_SPEED)
             elif alien.rect.left <= 0:
-                self.alien_direction = ALIEN_X_SPEED * self.speed_modifier
-                self.alien_hit_border(ALIEN_Y_SPEED)
+                self.alien_direction = ct.ALIEN_X_SPEED * self.speed_modifier
+                self.alien_hit_border(ct.ALIEN_Y_SPEED)
 
     def alien_hit_border(self, y_distance):
         if self.aliens:
@@ -132,7 +144,7 @@ class Game:
         if self.aliens.sprites():
             if self.shoot_count == self.shoot_timer:
                 alien = choice(self.aliens.sprites())
-                laser = Laser(alien.rect.center, LASER_SPEED)
+                laser = Laser(alien.rect.center, ct.LASER_SPEED)
                 self.alien_lasers.add(laser)
                 self.shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
                 self.shoot_count = 0
@@ -143,7 +155,8 @@ class Game:
     def mothership_spawn(self):
         if self.aliens.sprites():
             if self.mothership_count == self.mothership_cd:
-                self.mothership.add(Mothership(MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']), MOTHERSHIP_SPEED))
+                self.mothership.add(
+                    Mothership(ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']), ct.MOTHERSHIP_SPEED))
                 self.mothership_count = 0
                 self.mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
             else:
@@ -155,14 +168,14 @@ class Game:
         if self.player.sprite.lasers:
             for laser in self.player.sprite.lasers:
 
-                # Colisiones con los aliens
+                # Collision with aliens
                 alien_collisions = pg.sprite.spritecollide(laser, self.aliens, dokill=True)
                 if alien_collisions:
                     self.score += alien_collisions[0].alien_score()
                     laser.kill()
                     self.speed_modifier = self.speed_modifier * SPEED_INCREMENT
 
-                # Colisiones con la madre nodriza
+                # Collision with Mothership
                 if pg.sprite.spritecollide(laser, self.mothership, dokill=True):
                     laser.kill()
                     self.score += self.calculate_mothership_value()
@@ -181,8 +194,12 @@ class Game:
 
                 # TODO Colision con los obstaculos
 
-                # Colision entre laseres.
-                # El laser del jugador siempre se borra, y el del alien puede borrarse o continuar
+                # Collision between lasers.
+                '''
+                The laser shoot from the player always gets destroyed when hit by another laser, but the laser 
+                from the alien may shurvive the collision, as said in 
+                https://www.classicgaming.cc/classics/space-invaders/play-guide
+                '''
                 if pg.sprite.spritecollide(laser, self.player.sprite.lasers, dokill=True):
                     if choice([True, False]):
                         laser.kill()
@@ -204,13 +221,14 @@ class Game:
         self.game_status = Game_status.FINAL_SCREEN
 
     def show_final_screen(self):
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
-        final_rect = final_surf.get_rect(center=GAME_OVER_CENTER_POS)
-        screen.blit(final_surf, final_rect)
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
+        final_rect = final_surf.get_rect(center=ct.GAME_OVER_CENTER_POS)
+        self.surface.blit(final_surf, final_rect)
 
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False, 'white')
-        final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
-        screen.blit(final_surf, final_rect)
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.RETURN_FONT_SIZE).render('Press Esc to return', False,
+                                                                                           'white')
+        final_rect = final_surf.get_rect(center=ct.RETURN_CENTER_POS)
+        self.surface.blit(final_surf, final_rect)
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
@@ -228,16 +246,16 @@ class Menu:
         self.custom_theme.title_font = self.font
         self.custom_theme.widget_font = self.font
         self.menu = pygame_menu.Menu(
-            height=300,
+            width=MENU_SIZE[0],
+            height=MENU_SIZE[1],
             theme=self.custom_theme,
-            title='Select Player',
-            width=400
+            title='Select Player'
         )
 
-        self.menu.add.text_input('Name: ', onreturn=self.change_name)
+        self.menu.add.text_input('Name: ', onreturn=self.change_name, default='Unnamed')
         self.menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=self.change_player)
         self.menu.add.button('Leaderboard')
-        self.menu.add.button('Play', lambda: run_game(surface, Game(self.ia_player)))
+        self.menu.add.button('Play', lambda: run_game(surface, Game(surface, self.ia_player)))
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
 
     def run(self):
@@ -269,7 +287,7 @@ if __name__ == '__main__':
     pg.init()
     while True:
         pg.display.set_caption('Space Invaders')
-        screen = pg.display.set_mode(SCREEN_RES, RESIZABLE)
-        menu = Menu(screen)
+        surface = pg.display.set_mode(MENU_SCREEN_SIZE)
+        menu = Menu(surface)
 
         menu.run()

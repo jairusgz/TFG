@@ -1,7 +1,8 @@
 import pygame as pg
 from player import Player
 from pygame.locals import *
-from constants import *
+from constants_general import *
+
 
 class Controller:
     def __init__(self, player, ai_player=False):
@@ -19,4 +20,3 @@ class Controller:
                 self.player.move(-1)
             if keys[pg.K_SPACE]:
                 self.player.shoot_laser()
-
