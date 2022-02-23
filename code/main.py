@@ -16,13 +16,14 @@ from random import choice, randint
 
 
 class Game:
-    def __init__(self, ai=False):
+    def __init__(self, ai=False, name='AI'):
 
         # Status of the game
         self.level = 1
         self.game_status = Game_status.PLAYABLE_SCREEN
         self.speed_modifier = 1
         self.countdown_active = False
+        self.player_name = name
 
         # Player and controller
         self.player_sprite = Player(PLAYER_START_POS, (PLAYER_WIDTH, PLAYER_HEIGTH))
@@ -206,6 +207,11 @@ class Game:
         final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
         final_rect = final_surf.get_rect(center=GAME_OVER_CENTER_POS)
         screen.blit(final_surf, final_rect)
+
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False, 'white')
+        final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
+        screen.blit(final_surf, final_rect)
+
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
             self.game_status = Game_status.GAME_OVER
@@ -214,6 +220,7 @@ class Game:
 class Menu:
 
     def __init__(self, surface):
+        self.player_name = 'Unnamed'
         self.surface = surface
         self.ia_player = False
         self.font = pg.font.Font('../Resources/NES_Font.otf', 20)
@@ -227,6 +234,7 @@ class Menu:
             width=400
         )
 
+        self.menu.add.text_input('Name: ', onreturn=self.change_name)
         self.menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=self.change_player)
         self.menu.add.button('Leaderboard')
         self.menu.add.button('Play', lambda: run_game(surface, Game(self.ia_player)))
@@ -237,6 +245,9 @@ class Menu:
 
     def change_player(self, values, selected_value):
         self.ia_player = selected_value
+
+    def change_name(self, name):
+        self.player_name = name
 
 
 def run_game(surface, game):
