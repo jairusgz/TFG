@@ -16,17 +16,13 @@ from random import choice, randint
 
 class Game:
     def __init__(self, surface, ai=False, name='AI'):
-        print(ai)
+
         global ct
         if ai:
             import constants_ai as ct
-        else:
-            import constants_player as ct
-
-        #Screen
-        if ai:
             self.surface = pg.display.set_mode(ct.SCREEN_RES)
         else:
+            import constants_player as ct
             self.surface = surface
 
         # Status of the game
@@ -37,7 +33,7 @@ class Game:
         self.player_name = name
 
         # Player and controller
-        self.player_sprite = Player(ct.PLAYER_START_POS, (ct.PLAYER_WIDTH, ct.PLAYER_HEIGTH))
+        self.player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED, ct.SCREEN_WIDTH)
         self.player = pg.sprite.GroupSingle(self.player_sprite)
         self.controller = Controller(self.player_sprite, ai_player=ai)
 
