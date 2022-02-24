@@ -6,7 +6,7 @@ from constants_general import *
 
 class Player(pg.sprite.Sprite):
 
-    def __init__(self, start_pos, dimensions, player_speed, laser_speed, screen_width, ai=False):
+    def __init__(self, start_pos, dimensions, player_speed, laser_speed, laser_dimensions, screen_dimensions):
 
         # Crea un Sprite, carga la imagen del jugador, la reescala a 15x12px y la asigna una posicion inicial,
         # por defecto la parte central inferior de la pantalla
@@ -17,7 +17,8 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=start_pos)
         self.dimensions = dimensions
         self.speed = player_speed
-        self.max_x = screen_width
+        self.max_x = screen_dimensions[0]
+        self.max_y = screen_dimensions[1]
 
         self.lasers = pg.sprite.Group()
         self.laser_ready = True
@@ -25,6 +26,7 @@ class Player(pg.sprite.Sprite):
         self.laser_cd = PLAYER_LASER_CD
         self.laser_count = 0
         self.laser_speed = laser_speed
+        self.laser_dimensions = laser_dimensions
 
     def move(self, dir):
         if self.rect.x + self.dimensions[0] + dir * self.speed < self.max_x and self.rect.x + dir * self.speed > 0:
@@ -36,7 +38,7 @@ class Player(pg.sprite.Sprite):
 
     def shoot_laser(self):
         if self.laser_ready:
-            self.lasers.add(Laser(self.rect.center, - self.laser_speed))
+            self.lasers.add(Laser(self.rect.center, - self.laser_speed, self.laser_dimensions, self.max_y))
             self.laser_ready = False
             self.laser_time = pg.time.get_ticks()
             self.laser_count += 1

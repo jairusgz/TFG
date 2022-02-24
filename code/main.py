@@ -33,7 +33,8 @@ class Game:
         self.player_name = name
 
         # Player and controller
-        self.player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED, ct.SCREEN_WIDTH)
+        self.player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
+                                    ct.LASER_DIMENSIONS, ct.SCREEN_RES)
         self.player = pg.sprite.GroupSingle(self.player_sprite)
         self.controller = Controller(self.player_sprite, ai_player=ai)
 
@@ -140,7 +141,7 @@ class Game:
         if self.aliens.sprites():
             if self.shoot_count == self.shoot_timer:
                 alien = choice(self.aliens.sprites())
-                laser = Laser(alien.rect.center, ct.LASER_SPEED)
+                laser = Laser(alien.rect.center, ct.LASER_SPEED, ct.LASER_DIMENSIONS, ct.SCREEN_HEIGHT)
                 self.alien_lasers.add(laser)
                 self.shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
                 self.shoot_count = 0
