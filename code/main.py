@@ -89,6 +89,7 @@ class Game:
             self.show_score()
             self.show_final_screen()
 
+
     def show_lives(self):
         x = self.lives_x_pos
         for live in range(self.lives - 1):
@@ -116,7 +117,7 @@ class Game:
                     color = 'red'
                     value = 10
 
-                alien = Alien(ct.ALIEN_IMAGE_SIZE, color, x_coord, y_coord, value)
+                alien = Alien(ct.ALIEN_IMAGE_SIZE, color, [x_coord, y_coord], value)
                 self.aliens.add(alien)
                 x_coord += x_spacing
             y_coord += y_spacing
@@ -153,7 +154,7 @@ class Game:
         if self.aliens.sprites():
             if self.mothership_count == self.mothership_cd:
                 self.mothership.add(
-                    Mothership(ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']), ct.MOTHERSHIP_SPEED))
+                    Mothership(ct.MOTHERSHIP_Y, ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']), ct.MOTHERSHIP_SPEED, ct.SCREEN_RES))
                 self.mothership_count = 0
                 self.mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
             else:
@@ -168,7 +169,7 @@ class Game:
                 # Collision with aliens
                 alien_collisions = pg.sprite.spritecollide(laser, self.aliens, dokill=True)
                 if alien_collisions:
-                    self.score += alien_collisions[0].alien_score()
+                    self.score += alien_collisions[0].get_value()
                     laser.kill()
                     self.speed_modifier = self.speed_modifier * SPEED_INCREMENT
 
@@ -232,6 +233,7 @@ class Game:
             self.game_status = Game_status.GAME_OVER
 
 
+
 class Menu:
 
     def __init__(self, surface):
@@ -275,6 +277,7 @@ def run_game(surface, game):
                 exit()
 
         surface.fill([30, 30, 30])
+        surface.fill([87, 72, 0], rect=(ct.PLANET_X, ct.PLANET_Y, ct.PLANET_WIDTH, ct.PLANET_HEIGHT))
         game.run()
         pg.display.flip()
         clock.tick(60)

@@ -9,44 +9,39 @@ filenames = {'red': os.path.join('../Resources', 'red.png'),
 
 
 class Alien(pg.sprite.Sprite):
-    def __init__(self, dimensions, color, x, y, score, ai=False):
+    def __init__(self, dimensions, color, initial_pos, value):
 
-        global ct
-        if ai:
-            import constants_ai as ct
-        else:
-            import constants_player as ct
 
         super().__init__()
         img_path = filenames[color]
         self.image = pg.image.load(img_path).convert_alpha()
         self.image = pg.transform.scale(self.image, dimensions)
-        self.rect = self.image.get_rect(topleft=(x, y))
+        self.rect = self.image.get_rect(topleft=initial_pos)
         self.absolute_x = self.rect.x
-        self.score = score
+        self.value = value
 
     def update(self, direction):
         self.absolute_x += direction
         self.rect.x = math.trunc(self.absolute_x)
 
-    def alien_score(self):
-        return self.score
+    def get_value(self):
+        return self.value
 
 
 class Mothership(pg.sprite.Sprite):
-    def __init__(self, dimensions, side, speed):
+    def __init__(self, y, dimensions, side, speed, screen_size):
         super().__init__()
         self.image = pg.image.load('../Resources/extra.png').convert_alpha()
         self.image = pg.transform.scale(self.image, dimensions)
 
         if side == 'right':
-            x = ct.SCREEN_WIDTH + 50 * ct.REESCALADO
+            x = screen_size[0] + 50
             self.speed = -speed
         else:
-            x = -50 * ct.REESCALADO
+            x = -50
             self.speed = speed
 
-        self.rect = self.image.get_rect(topleft=(x, ct.MOTHERSHIP_Y))
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.absolute_x = self.rect.x
 
     def update(self):
