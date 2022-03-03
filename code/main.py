@@ -15,22 +15,24 @@ from random import choice, randint
 
 
 class Game:
-    def __init__(self, surface, ai=False, name='AI'):
+    def __init__(self, surface, player_name, ai=False):
 
         global ct
         if ai:
             import constants_ai as ct
             self.surface = pg.display.set_mode(ct.SCREEN_RES)
+            self.player_name = 'AI'
         else:
             import constants_player as ct
             self.surface = surface
+            self.player_name = player_name
 
         # Status of the game
         self.level = 1
         self.game_status = Game_status.PLAYABLE_SCREEN
         self.speed_modifier = 1
         self.countdown_active = False
-        self.player_name = name
+
 
         # Player and controller
         self.player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
@@ -88,7 +90,6 @@ class Game:
         elif self.game_status == Game_status.FINAL_SCREEN:
             self.show_score()
             self.show_final_screen()
-
 
     def show_lives(self):
         x = self.lives_x_pos
@@ -154,7 +155,8 @@ class Game:
         if self.aliens.sprites():
             if self.mothership_count == self.mothership_cd:
                 self.mothership.add(
-                    Mothership(ct.MOTHERSHIP_Y, ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']), ct.MOTHERSHIP_SPEED, ct.SCREEN_RES))
+                    Mothership(ct.MOTHERSHIP_Y, ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']),
+                               ct.MOTHERSHIP_SPEED, ct.SCREEN_RES))
                 self.mothership_count = 0
                 self.mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
             else:
@@ -233,12 +235,11 @@ class Game:
             self.game_status = Game_status.GAME_OVER
 
 
-
 class Menu:
 
     def __init__(self, surface):
         self.player_name = 'Unnamed'
-        self.surface = surface
+        self.surface = pg.display.set_mode(MENU_SCREEN_SIZE)
         self.ia_player = False
         self.font = pg.font.Font('../Resources/NES_Font.otf', 20)
         self.custom_theme = pygame_menu.themes.THEME_DARK.copy()
@@ -254,7 +255,7 @@ class Menu:
         self.menu.add.text_input('Name: ', onreturn=self.change_name, default='Unnamed')
         self.menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=self.change_player)
         self.menu.add.button('Leaderboard')
-        self.menu.add.button('Play', lambda: run_game(surface, Game(surface, self.ia_player)))
+        self.menu.add.button('Play', lambda: run_game(surface, Game(surface, self.player_name, self.ia_player)))
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
 
     def run(self):
@@ -281,6 +282,8 @@ def run_game(surface, game):
         game.run()
         pg.display.flip()
         clock.tick(60)
+
+    pg.display.set_mode(MENU_SCREEN_SIZE)
 
 
 if __name__ == '__main__':
