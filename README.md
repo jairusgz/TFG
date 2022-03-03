@@ -10,3 +10,7 @@
 - Python3
 - pygame 
 - pygame-menu
+- pandas
+- numpy
+- tensorflow
+- keras
