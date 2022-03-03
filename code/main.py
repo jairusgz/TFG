@@ -188,7 +188,8 @@ class Game:
                 if pg.sprite.spritecollide(laser, self.player, dokill=False):
                     laser.kill()
                     if self.lives > 1:
-                        self.lives -= 1
+                        #self.lives -= 1
+                        print('Hit')
                     else:
                         self.game_over()
 
@@ -203,6 +204,11 @@ class Game:
                 if pg.sprite.spritecollide(laser, self.player.sprite.lasers, dokill=True):
                     if choice([True, False]):
                         laser.kill()
+
+        if self.aliens:
+            for alien in self.aliens:
+                if alien.rect.bottom >= ct.ALIEN_MAX_Y:
+                    self.game_status = Game_status.FINAL_SCREEN
 
     def calculate_mothership_value(self):
         '''
