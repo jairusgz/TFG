@@ -11,7 +11,7 @@ class Controller:
 
     def get_input(self):
 
-        if not self.AI:
+        if not self._ai_player:
             keys = pg.key.get_pressed()
 
             if keys[pg.K_RIGHT]:

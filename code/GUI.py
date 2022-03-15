@@ -7,8 +7,6 @@ import pygame_menu
 from game import Game
 from constants_general import *
 
-ct = None
-
 
 class GameScreen:
     def __init__(self):
@@ -19,6 +17,8 @@ class GameScreen:
 
         self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
         self._game_manager = Game()
+
+        self._lives_img = pg.image.load('../Resources/player.png').convert_alpha()
 
         self._player_name = 'Unnamed'
         self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
@@ -45,29 +45,70 @@ class GameScreen:
     def __change_name(self, name):
         self._player_name = name
 
-    def __run_game(self):
+    def __setup_game(self):
+        global ct
+        if self._ai_player:
+            import constants_ai as ct
+        else:
+            import constants_player as ct
+
         self._game_manager.setup(self._ai_player, self._player_name)
+        self._lives_img = pg.transform.scale(self._lives_img, ct.LIVES_IMG_DIMENSIONS)
+
+    def __show_score(self):
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render('SCORE: ' + str(self._game_manager.score),
+                                                                                          False, 'white')
+        score_rect = score_surf.get_rect(topleft=[0, 0])
+        self._surface.blit(score_surf, score_rect)
+
+    def __show_lives(self):
+        x = ct.LIVES_X_START
+        for live in range(self._game_manager.lives - 1):
+            x -= (live * ct.LIVES_IMG_DIMENSIONS[0] + ct.LIVES_SPACE)
+            self._surface.blit(self._lives_img, (x, ct.LIVES_Y))
+
+    def __draw_sprites(self):
+        self._game_manager.aliens.draw(self._surface)
+        self._game_manager.alien_lasers.draw(self._surface)
+        self._game_manager.mothership.draw(self._surface)
+        self._game_manager.player.sprite.lasers.draw(self._surface)
+        self._game_manager.player.draw(self._surface)
+
+    def __show_final_screen(self):
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
+        final_rect = final_surf.get_rect(center=ct.GAME_OVER_CENTER_POS)
+        self._surface.blit(final_surf, final_rect)
+
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.RETURN_FONT_SIZE).render('Press Esc to return', False,
+                                                                                           'white')
+        final_rect = final_surf.get_rect(center=ct.RETURN_CENTER_POS)
+        self._surface.blit(final_surf, final_rect)
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_ESCAPE]:
+            self._game_manager.set_game_over()
+
+    def __run_game(self):
+        self.__setup_game()
         clock = pg.time.Clock()
 
-        while self._game_manager.get_game_status != Game_status.GAME_OVER:
+        while self._game_manager.game_status != Game_status.GAME_OVER:
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     pg.quit()
                     exit()
 
             self._surface.fill([30, 30, 30])
-            # self._surface.fill([87, 72, 0], rect=(ct.PLANET_X, ct.PLANET_Y, ct.PLANET_WIDTH, ct.PLANET_HEIGHT))
+            self._surface.fill([87, 72, 0], rect=(ct.PLANET_X, ct.PLANET_Y, ct.PLANET_WIDTH, ct.PLANET_HEIGHT))
             self._game_manager.run()
+            self.__draw_sprites()
+            self.__show_lives()
+            self.__show_score()
+
             pg.display.flip()
             clock.tick(60)
 
         pg.display.set_mode(MENU_SCREEN_SIZE)
-
-    def show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render('SCORE: ' + str(self._score),
-                                                                                          False, 'white')
-        score_rect = score_surf.get_rect(topleft=[0, 0])
-        self._surface.blit(score_surf, score_rect)
 
 
 if __name__ == '__main__':

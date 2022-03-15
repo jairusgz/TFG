@@ -11,8 +11,6 @@ from constants_general import *
 from alien import Alien, Mothership
 from random import choice, randint
 
-ct = None
-
 
 class Game:
     def __init__(self):
@@ -26,7 +24,7 @@ class Game:
         # Player and controller
         self._player_sprite = None
         self._player = None
-        self._controller = Controller()
+        self._controller = None
 
         # Aliens
         self._aliens = None
@@ -43,7 +41,7 @@ class Game:
 
         # Life system
         self._lives = None
-        self._lives_img = pygame.image.load('../Resources/player.png').convert_alpha()
+
         self._lives_x_pos = None
 
         # Score system
@@ -61,8 +59,7 @@ class Game:
         self._player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
                                      ct.LASER_DIMENSIONS, ct.SCREEN_RES)
         self._player = pg.sprite.GroupSingle(self._player_sprite)
-        self._controller.set_player(self._player)
-        self._controller.set_ai_player(ai_player)
+        self._controller = Controller(self._player_sprite, ai_player)
         self._aliens = pg.sprite.Group()
         self._alien_lasers = pygame.sprite.Group()
         self.alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
@@ -79,18 +76,15 @@ class Game:
 
         # Life system
         self._lives = NUM_LIVES
-        self._lives_img = pg.transform.scale(self._lives_img, ct.LIVES_IMG_DIMENSIONS)
-        self._lives_x_pos = ct.LIVES_X_START
 
         # Score system
         self._score = 0
 
-        self._game_status = Game_status.INITIALIZED
+        self._game_status = Game_status.PLAYABLE_SCREEN
 
     def run(self):
         if self._game_status == Game_status.PLAYABLE_SCREEN:
             self.collisions()
-            self.show_lives()
 
             self._player.update()
             self._aliens.update(self._alien_direction)
@@ -100,31 +94,8 @@ class Game:
             self.mothership_spawn()
             self._mothership.update()
 
-            self._player.sprite.lasers.draw(self.surface)
             self._alien_lasers.update()
             self._controller.get_input()
-
-            self._player.draw(self.surface)
-            self._aliens.draw(self.surface)
-            self._alien_lasers.draw(self.surface)
-            self._mothership.draw(self.surface)
-            self.show_score()
-
-        elif self._game_status == Game_status.FINAL_SCREEN:
-            self.show_score()
-            self.show_final_screen()
-
-    def show_lives(self):
-        x = self._lives_x_pos
-        for live in range(self._lives - 1):
-            x -= (live * ct.LIVES_IMG_DIMENSIONS[0] + ct.LIVES_SPACE)
-            self.surface.blit(self._lives_img, (x, ct.LIVES_Y))
-
-    def show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render('SCORE: ' + str(self._score),
-                                                                                          False, 'white')
-        score_rect = score_surf.get_rect(topleft=[0, 0])
-        self.surface.blit(score_surf, score_rect)
 
     def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
@@ -211,8 +182,7 @@ class Game:
                 if pg.sprite.spritecollide(laser, self._player, dokill=False):
                     laser.kill()
                     if self._lives > 1:
-                        # self.lives -= 1
-                        print('Hit')
+                        self._lives -= 1
                     else:
                         self.game_over()
 
@@ -249,20 +219,33 @@ class Game:
         # TODO Comprobar la score y añadir a leaderboard si esta en el top
         self._game_status = Game_status.FINAL_SCREEN
 
-    def show_final_screen(self):
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
-        final_rect = final_surf.get_rect(center=ct.GAME_OVER_CENTER_POS)
-        self.surface.blit(final_surf, final_rect)
-
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.RETURN_FONT_SIZE).render('Press Esc to return', False,
-                                                                                           'white')
-        final_rect = final_surf.get_rect(center=ct.RETURN_CENTER_POS)
-        self.surface.blit(final_surf, final_rect)
-
-        keys = pg.key.get_pressed()
-        if keys[pg.K_ESCAPE]:
-            self._game_status = Game_status.GAME_OVER
+    @property
+    def game_status(self):
+        return self._game_status
 
     @property
-    def get_game_status(self):
-        return self._game_status
+    def lives(self):
+        return self._lives
+
+    @property
+    def score(self):
+        return self._score
+
+    @property
+    def aliens(self):
+        return self._aliens
+
+    @property
+    def player(self):
+        return self._player
+
+    @property
+    def mothership(self):
+        return self._mothership
+
+    @property
+    def alien_lasers(self):
+        return self._alien_lasers
+
+    def set_game_over(self):
+        self._game_status = Game_status.GAME_OVER
