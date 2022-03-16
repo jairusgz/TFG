@@ -6,6 +6,8 @@ class Game_status(Enum):
     PLAYABLE_SCREEN = 0
     FINAL_SCREEN = 1
     GAME_OVER = 2
+    UNINITIALIZED = 3
+    INITIALIZED = 4
 
 
 # Main Screen
