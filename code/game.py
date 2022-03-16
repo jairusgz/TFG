@@ -1,10 +1,5 @@
-import pygame as pg
-import sys
-
 import pygame.sprite
-from time import sleep
-from player import Player
-from pygame.locals import *
+
 from controller import *
 from laser import Laser
 from constants_general import *
