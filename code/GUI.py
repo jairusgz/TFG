@@ -1,10 +1,7 @@
 import pygame as pg
-import pygame as pg
-from pygame_menu import Theme
-from pygame_menu.widgets import Selector
 import pygame_menu
 
-from game import Game
+from game_manager import GameManager
 from constants_general import *
 
 
@@ -17,8 +14,7 @@ class GameScreen:
 
         # Surface and Game Manager
         self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
-        self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
-        self._game_manager = Game()
+        self._game_manager = GameManager()
 
         # Player image, displayed at the top right as the number of lives
         self._lives_img = pg.image.load('../Resources/player.png').convert_alpha()
@@ -36,14 +32,14 @@ class GameScreen:
         )
 
         # Add widgets and handlers to the menu
-        self._menu.add.text_input('Name: ', onreturn=self.__change_name, default='Unnamed')
+        self._menu.add.text_input('Name: ', onchange=self.__change_name, default='Unnamed')
         self._menu.add.selector('Player: ', [('Human', False), ('AI', True)], onchange=self.__change_player)
         self._menu.add.button('Leaderboard')
         self._menu.add.button('Play', lambda: self.__run_game())
         self._menu.add.button('Quit', pygame_menu.events.EXIT)
 
-    # Run the menu on the surface
-    def run_menu(self):
+    # Start the program by starting the mainloop from the menu
+    def run(self):
         self._menu.mainloop(self._surface)
 
     # Change player type, called from the selector widget when the value is changed
@@ -68,8 +64,9 @@ class GameScreen:
 
     # Show the score on the top-left corner of the screen
     def __show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render('SCORE: ' + str(self._game_manager.score),
-                                                                                          False, 'white')
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render(
+                                  'SCORE: ' + str(self._game_manager.score), False, 'white')
+
         score_rect = score_surf.get_rect(topleft=[0, 0])
         self._surface.blit(score_surf, score_rect)
 
@@ -105,14 +102,14 @@ class GameScreen:
 
     # Setup a new game and start it
     def __run_game(self):
-        '''
+        """
         Main loop of the program. It setups a new game and start it until the status changes to GAME_OVER
         Each iteration of the loop, it calls the run function of the game manager that updates the sprites and handles
         collisions, timers, lasers... and then print the updated sprites on the screen.
 
         If the game status changes to FINAL_SCREEN, it calls the method show_final_screen that shows the final screen
         and waits for the player to press ESC to return to the menu.
-        '''
+        """
         self.__setup_game()
         clock = pg.time.Clock()
 
@@ -139,7 +136,6 @@ class GameScreen:
 
 if __name__ == '__main__':
     pg.init()
-    while True:
-        pg.display.set_caption('Space Invaders')
-        gui = GameScreen()
-        gui.run_menu()
+    pg.display.set_caption('Space Invaders')
+    gui = GameScreen()
+    gui.run()
