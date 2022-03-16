@@ -64,8 +64,8 @@ class GameManager:
         self._controller = Controller(self._player_sprite, ai_player)
         self._aliens = pg.sprite.Group()
         self._alien_lasers = pygame.sprite.Group()
-        self.alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
-                         ct.ALIEN_Y_SPACING)
+        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
+                           ct.ALIEN_Y_SPACING)
 
         self._alien_direction = ct.ALIEN_X_SPEED
         self._shoot_count = 0
@@ -86,20 +86,20 @@ class GameManager:
 
     def run(self):
         if self._game_status == Game_status.PLAYABLE_SCREEN:
-            self.collisions()
+            self.__check_collisions()
 
             self._player.update()
             self._aliens.update(self._alien_direction)
-            self.alien_border_constraint()
-            self.alien_shoot()
+            self.__alien_border_constraint()
+            self.__alien_shoot()
 
-            self.mothership_spawn()
+            self.__mothership_spawn()
             self._mothership.update()
 
             self._alien_lasers.update()
             self._controller.get_input()
 
-    def alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
+    def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
         for r in range(rows):
             for c in range(columns):
@@ -120,22 +120,22 @@ class GameManager:
             y_coord += y_spacing
             x_coord = start_pos[0]
 
-    def alien_border_constraint(self):
+    def __alien_border_constraint(self):
         aliens = self._aliens.sprites()
         for alien in aliens:
             if alien.rect.right >= ct.SCREEN_WIDTH:
                 self._alien_direction = - ct.ALIEN_X_SPEED * self._speed_modifier
-                self.alien_hit_border(ct.ALIEN_Y_SPEED)
+                self.__alien_hit_border(ct.ALIEN_Y_SPEED)
             elif alien.rect.left <= 0:
                 self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
-                self.alien_hit_border(ct.ALIEN_Y_SPEED)
+                self.__alien_hit_border(ct.ALIEN_Y_SPEED)
 
-    def alien_hit_border(self, y_distance):
+    def __alien_hit_border(self, y_distance):
         if self._aliens:
             for alien in self._aliens.sprites():
                 alien.rect.y += y_distance
 
-    def alien_shoot(self):
+    def __alien_shoot(self):
         if self._aliens.sprites():
             if self._shoot_count == self._shoot_timer:
                 alien = choice(self._aliens.sprites())
@@ -147,7 +147,7 @@ class GameManager:
             else:
                 self._shoot_count += 1
 
-    def mothership_spawn(self):
+    def __mothership_spawn(self):
         if self._aliens.sprites():
             if self._mothership_count == self._mothership_cd:
                 self._mothership.add(
@@ -158,7 +158,7 @@ class GameManager:
             else:
                 self._mothership_count += 1
 
-    def collisions(self):
+    def __check_collisions(self):
 
         # Player lasers
         if self._player.sprite.lasers:
@@ -174,7 +174,7 @@ class GameManager:
                 # Collision with Mothership
                 if pg.sprite.spritecollide(laser, self._mothership, dokill=True):
                     laser.kill()
-                    self._score += self.calculate_mothership_value()
+                    self._score += self.__calculate_mothership_value()
 
                 # TODO Colisiones con los obstaculos
 
@@ -186,7 +186,7 @@ class GameManager:
                     if self._lives > 1:
                         self._lives -= 1
                     else:
-                        self.game_over()
+                        self.__final_screen()
 
                 # TODO Colision con los obstaculos
 
@@ -205,7 +205,7 @@ class GameManager:
                 if alien.rect.bottom >= ct.ALIEN_MAX_Y:
                     self._game_status = Game_status.FINAL_SCREEN
 
-    def calculate_mothership_value(self):
+    def __calculate_mothership_value(self):
         """
         The score of the mothership is controlled by the number of shots fired by the player before the mothership is
         destroyed. It reaches its max value (300) on the 23rd shot and every 15th shot, according to
@@ -217,7 +217,7 @@ class GameManager:
         else:
             return 150 + ((self._player_sprite.get_laser_count() - 23) % 16) * 10
 
-    def game_over(self):
+    def __final_screen(self):
         # TODO Comprobar la score y añadir a leaderboard si esta en el top
         self._game_status = Game_status.FINAL_SCREEN
 
