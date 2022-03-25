@@ -1,4 +1,5 @@
 import pygame.sprite
+import pandas as pd
 
 from controller import *
 from laser import Laser
@@ -22,6 +23,8 @@ class GameManager:
         self._level = 1
         self._game_status = Game_status.UNINITIALIZED
         self._speed_modifier = 1
+        self._pixel_array = None
+        self._high_scores = None
 
         # Player and controller
         self._player_sprite = None
@@ -29,8 +32,8 @@ class GameManager:
         self._controller = None
 
         # Aliens
-        self._aliens = None
-        self._alien_lasers = None
+        self._aliens = pg.sprite.Group()
+        self._alien_lasers = pygame.sprite.Group()
         self._alien_direction = None
         self._shoot_count = None
         self._shoot_timer = None
@@ -38,13 +41,11 @@ class GameManager:
         # Mothership
         self._mothership = pygame.sprite.GroupSingle()
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
-        self._mothership_count = None
-        self._mothership_score = None
+        self._mothership_count = 0
+        self._mothership_score = 70
 
         # Life system
         self._lives = None
-
-        self._lives_x_pos = None
 
         # Score system
         self._score = 0
@@ -62,10 +63,10 @@ class GameManager:
                                      ct.LASER_DIMENSIONS, ct.SCREEN_RES)
         self._player = pg.sprite.GroupSingle(self._player_sprite)
         self._controller = Controller(self._player_sprite, ai_player)
-        self._aliens = pg.sprite.Group()
-        self._alien_lasers = pygame.sprite.Group()
         self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
                            ct.ALIEN_Y_SPACING)
+
+        self._high_scores = pd.read_csv('../Data/high_scores.csv')
 
         self._alien_direction = ct.ALIEN_X_SPEED
         self._shoot_count = 0
@@ -73,16 +74,16 @@ class GameManager:
 
         # Mothership
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
-        self._mothership_count = 0
-        self._mothership_score = 70
+
 
         # Life system
         self._lives = NUM_LIVES
 
         # Score system
-        self._score = 0
-
         self._game_status = Game_status.PLAYABLE_SCREEN
+
+    def set_pixel_array(self, pixel_array):
+        self._pixel_array = pixel_array
 
     def run(self):
         if self._game_status == Game_status.PLAYABLE_SCREEN:
@@ -97,6 +98,7 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
+            self._controller.set_game_info(self._score, self._pixel_array)
             self._controller.get_input()
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
@@ -218,8 +220,14 @@ class GameManager:
             return 150 + ((self._player_sprite.get_laser_count() - 23) % 16) * 10
 
     def __final_screen(self):
-        # TODO Comprobar la score y añadir a leaderboard si esta en el top
+        self.__write_high_scores()
         self._game_status = Game_status.FINAL_SCREEN
+
+    def __write_high_scores(self):
+        self._high_scores = self._high_scores.append({'Player_name': self._player_name, 'Score': self._score}, ignore_index=True)
+        top_10 = self._high_scores.sort_values(by=['Score'], ascending=False)[:3]
+        top_10.to_csv('../Data/high_scores.csv', index=False)
+
 
     @property
     def game_status(self):

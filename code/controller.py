@@ -8,6 +8,8 @@ class Controller:
     def __init__(self, player=None, ai_player=False):
         self._player = player
         self._ai_player = ai_player
+        self._pixel_array = None
+        self._cum_reward = 0
 
     def get_input(self):
 
@@ -26,3 +28,7 @@ class Controller:
 
     def set_player(self, player):
         self._player = player
+
+    def set_game_info(self, cum_reward, pixel_array):
+        self._cum_reward = cum_reward
+        self._pixel_array = pixel_array
