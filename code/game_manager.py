@@ -20,9 +20,9 @@ class GameManager:
     def __init__(self):
         # Status of the game
         self._player_name = 'Unnamed'
-        self._level = 1
+        self._level = None
         self._game_status = Game_status.UNINITIALIZED
-        self._speed_modifier = 1
+        self._speed_modifier = None
         self._pixel_array = None
         self._high_scores = None
 
@@ -59,6 +59,8 @@ class GameManager:
             import constants_player as ct
             self._player_name = player_name.upper()
 
+        self._level = 1
+        self._speed_modifier = 1
         self._player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
                                      ct.LASER_DIMENSIONS, ct.SCREEN_RES)
         self._player = pg.sprite.GroupSingle(self._player_sprite)
@@ -75,12 +77,25 @@ class GameManager:
         # Mothership
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
 
-
         # Life system
         self._lives = NUM_LIVES
 
         # Score system
         self._game_status = Game_status.PLAYABLE_SCREEN
+
+    def __next_level(self):
+        # Advance to next level and adjust speed modifier
+        self._level += 1
+        self._speed_modifier = 1 + self._level / 10
+
+        # Reset the aliens and the mothership timer and value
+        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
+                           ct.ALIEN_Y_SPACING)
+        self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
+        self._mothership_count = 0
+        self._mothership_score = 70
+        self._alien_direction = ct.ALIEN_X_SPEED
+        self._shoot_count = 0
 
     def set_pixel_array(self, pixel_array):
         self._pixel_array = pixel_array
@@ -173,6 +188,10 @@ class GameManager:
                     laser.kill()
                     self._speed_modifier = self._speed_modifier * SPEED_INCREMENT
 
+                    # Advance to next level if all the aliens are killed
+                    if not self._aliens:
+                        self.__next_level()
+
                 # Collision with Mothership
                 if pg.sprite.spritecollide(laser, self._mothership, dokill=True):
                     laser.kill()
@@ -224,10 +243,10 @@ class GameManager:
         self._game_status = Game_status.FINAL_SCREEN
 
     def __write_high_scores(self):
-        self._high_scores = self._high_scores.append({'Player_name': self._player_name, 'Score': self._score}, ignore_index=True)
+        self._high_scores = self._high_scores.append({'Player_name': self._player_name, 'Score': self._score},
+                                                     ignore_index=True)
         top_10 = self._high_scores.sort_values(by=['Score'], ascending=False)[:3]
         top_10.to_csv('../Data/high_scores.csv', index=False)
-
 
     @property
     def game_status(self):
