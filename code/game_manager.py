@@ -31,6 +31,9 @@ class GameManager:
         self._player = None
         self._controller = None
 
+        self._player_lasers = pygame.sprite.Group()
+
+
         # Aliens
         self._aliens = pg.sprite.Group()
         self._alien_lasers = pygame.sprite.Group()
@@ -94,7 +97,7 @@ class GameManager:
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
         self._mothership_count = 0
         self._mothership_score = 70
-        self._alien_direction = ct.ALIEN_X_SPEED
+        self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
         self._shoot_count = 0
 
     def set_pixel_array(self, pixel_array):
@@ -186,7 +189,12 @@ class GameManager:
                 if alien_collisions:
                     self._score += alien_collisions[0].value
                     laser.kill()
-                    self._speed_modifier = self._speed_modifier * SPEED_INCREMENT
+                    self._speed_modifier *= SPEED_INCREMENT
+                    if self._alien_direction < 0:
+                        self._alien_direction = - ct.ALIEN_X_SPEED * self._speed_modifier
+                    else:
+                        self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
+                    print(self._speed_modifier)
 
                     # Advance to next level if all the aliens are killed
                     if not self._aliens:
@@ -233,10 +241,10 @@ class GameManager:
         https://www.classicgaming.cc/classics/space-invaders/play-guide
         """
 
-        if self._player_sprite.get_laser_count() <= 23:
-            return 70 + self._player_sprite.get_laser_count() * 10
+        if self._player_sprite.laser_count <= 23:
+            return 70 + self._player_sprite.laser_count * 10
         else:
-            return 150 + ((self._player_sprite.get_laser_count() - 23) % 16) * 10
+            return 150 + ((self._player_sprite.laser_count - 23) % 16) * 10
 
     def __final_screen(self):
         self.__write_high_scores()

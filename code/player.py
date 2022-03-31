@@ -60,3 +60,14 @@ class Player(pg.sprite.Sprite):
     @property
     def rect(self):
         return self._rect
+
+    @property
+    def laser_ready(self):
+        return self._laser_ready
+
+    @property
+    def get_pos(self):
+        return self._rect.center
+
+    def count_shots(self):
+        self._laser_count += 1
