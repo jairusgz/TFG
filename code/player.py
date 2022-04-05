@@ -45,6 +45,7 @@ class Player(pg.sprite.Sprite):
             if pg.time.get_ticks() - self._laser_time >= self._laser_cd:
                 self._laser_ready = True
 
+
     @property
     def laser_count(self):
         return self._laser_count

@@ -19,6 +19,7 @@ class GameManager:
 
     def __init__(self):
         # Status of the game
+        self._training_mode = False
         self._player_name = 'Unnamed'
         self._level = None
         self._game_status = Game_status.UNINITIALIZED
@@ -30,9 +31,6 @@ class GameManager:
         self._player_sprite = None
         self._player = None
         self._controller = None
-
-        self._player_lasers = pygame.sprite.Group()
-
 
         # Aliens
         self._aliens = pg.sprite.Group()
@@ -53,21 +51,26 @@ class GameManager:
         # Score system
         self._score = 0
 
-    def setup(self, ai_player, player_name):
+    def setup(self, ai_player, player_name, training_mode=False):
         global ct
         if ai_player:
             import constants_ai as ct
             self._player_name = 'AI'
+            self._controller = Controller_AI()
         else:
             import constants_player as ct
             self._player_name = player_name.upper()
+            self._controller = Controller_Human()
 
+        self._training_mode = training_mode
         self._level = 1
         self._speed_modifier = 1
         self._player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
                                      ct.LASER_DIMENSIONS, ct.SCREEN_RES)
         self._player = pg.sprite.GroupSingle(self._player_sprite)
-        self._controller = Controller(self._player_sprite, ai_player)
+
+        self._controller.set_player(self._player_sprite)
+
         self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
                            ct.ALIEN_Y_SPACING)
 
@@ -117,7 +120,7 @@ class GameManager:
 
             self._alien_lasers.update()
             self._controller.set_game_info(self._score, self._pixel_array)
-            self._controller.get_input()
+            self._controller.action()
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         x_coord, y_coord = start_pos
