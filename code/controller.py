@@ -37,7 +37,7 @@ class Controller_AI(Controller, ABC):
         self._reward = 0
         self._done = 0
         self._action = 0
-
+        self._new_episode = False
 
     def __preprocess_state(self, state):
         arr = np.array(state)
@@ -56,7 +56,8 @@ class Controller_AI(Controller, ABC):
 
     def train_model(self, state):
         self._state = self.__preprocess_state(state)
-        self._action = self._model.train(self._state)
+        self._action = self._model.train(self._state, new_episode=self._new_episode)
+        self._new_episode = False
 
     def update_model(self, next_state, reward):
         self._model.update(self._state, self._action, reward, self.__preprocess_state(next_state))
@@ -78,7 +79,7 @@ class Controller_AI(Controller, ABC):
             self._player.shoot_laser()
 
     def new_episode(self):
-        return self._model.new_episode
+        self._new_episode = True
 
 class Controller_Human(Controller, ABC):
     def __init__(self, player=None):

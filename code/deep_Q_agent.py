@@ -68,15 +68,18 @@ class DeepQAgent:
         if not self._done:
             self._frame_count += 1
             self._new_episode = new_episode
+            if self._frame_count % 100 == 0:
+                print("Frame count: {}".format(self._frame_count))
 
             if self._frame_count >= self._max_steps_per_episode:
                 self._new_episode = True
-                self._episode_count += 1
 
             if self._new_episode:
+                self._episode_count += 1
                 self._new_episode = False
                 self._frame_count = 0
                 self._episode_reward = 0
+                print('Episode: {}'.format(self._episode_count))
 
             if self._frame_count < self._epsilon_random_frames or self._epsilon > np.random.rand(1)[0]:
                 # Take random action
@@ -170,8 +173,6 @@ class DeepQAgent:
                 del self._episode_reward_history[:1]
             running_reward = np.mean(self._episode_reward_history)
 
-            self._episode_count += 1
-
             if running_reward > 2000:  # Condition to consider the task solved
                 print("Solved at episode {}!".format(self._episode_count))
                 self._done = True
@@ -180,3 +181,4 @@ class DeepQAgent:
     @property
     def new_episode(self):
         return self._new_episode
+

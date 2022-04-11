@@ -19,6 +19,7 @@ class GameManager:
 
     def __init__(self):
         # Status of the game
+        self._ai_player = False
         self._pixel_array = None
         self._player_name = 'Unnamed'
         self._level = None
@@ -53,6 +54,7 @@ class GameManager:
 
     def setup(self, ai_player, player_name='AI', controller=None):
         global ct
+        self._ai_player = ai_player
         if ai_player:
             import constants_ai as ct
             self._player_name = 'AI'
@@ -112,11 +114,10 @@ class GameManager:
 
 
     def run(self, surface):
+        self._reward = 0
         if self._game_status == Game_status.PLAYABLE_SCREEN:
-            if TRAINING_MODE:
+            if self._ai_player and TRAINING_MODE:
                 self._controller.train_model(pg.surfarray.array3d(surface))
-                if self._controller.new_episode():
-                    self.setup(ai_player=True, controller=self._controller)
 
             self.__check_collisions()
 
@@ -129,7 +130,7 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
-            if TRAINING_MODE:
+            if self._ai_player and TRAINING_MODE:
                 self._controller.update_model(pg.surfarray.array3d(surface), self._reward)
             self._controller.action()
 
@@ -250,7 +251,12 @@ class GameManager:
         if self._aliens:
             for alien in self._aliens:
                 if alien.rect.bottom >= ct.ALIEN_MAX_Y:
-                    self._game_status = Game_status.FINAL_SCREEN
+                    self._reward = -1
+                    if self._ai_player and TRAINING_MODE:
+                        self.__final_screen()
+                    else:
+                        self._game_status = Game_status.FINAL_SCREEN
+
 
     def __calculate_mothership_value(self):
         """
@@ -265,8 +271,9 @@ class GameManager:
             return 150 + ((self._player_sprite.laser_count - 23) % 16) * 10
 
     def __final_screen(self):
-        if TRAINING_MODE:
-            self.setup(ai_player=True)
+        if self._ai_player and TRAINING_MODE:
+            self._controller.new_episode()
+            self.setup(ai_player=True, controller=self._controller)
         else:
             self.__write_high_scores()
             self._game_status = Game_status.FINAL_SCREEN
