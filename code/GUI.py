@@ -124,7 +124,7 @@ class GameScreen:
                 self.__show_final_screen()
             else:
                 self._surface.fill([87, 72, 0], rect=(ct.PLANET_X, ct.PLANET_Y, ct.PLANET_WIDTH, ct.PLANET_HEIGHT))
-                self._game_manager.run()
+                self._game_manager.run(self._surface)
                 self.__draw_sprites()
                 self.__show_lives()
             self.__show_score()
