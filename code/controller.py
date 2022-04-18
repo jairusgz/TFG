@@ -19,7 +19,6 @@ class Controller(ABC):
     def action(self):
         pass
 
-
     @property
     def player(self):
         return self._player
@@ -38,20 +37,26 @@ class Controller_AI(Controller, ABC):
         self._done = 0
         self._action = 0
         self._new_episode = False
+        self._action_mapping = {0: lambda: self._player.move(0),
+                                1: lambda: self._player.move(-1),
+                                2: lambda: self._player.move(1),
+                                3: lambda: self._player.shoot_laser(),
+                                4: lambda: self._player.move(-1) and self._player.shoot_laser(),
+                                5: lambda: self._player.move(1) and self._player.shoot_laser()}
 
     def __preprocess_state(self, state):
         arr = np.array(state)
-        #First, we ignore the top part of the screen
-        arr = arr[:160, 50:210]
+        # First, we crop the image to remove the top and bottom of the screen
+        arr = arr[:160, 27:187]
 
-        #Then, we convert the array to grayscale
+        # Then, we convert the array to grayscale
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
         gray_scale_arr = 0.2989 * r + 0.5870 * g + 0.1140 * b
 
-        #We normalize the array
+        # We normalize the array
         gray_scale_arr /= 255
 
-        #Finally, we downsample the array to a 80x80 shape
+        # Finally, we downsample the array to a 80x80 shape
         return block_reduce(gray_scale_arr, block_size=(2, 2), func=np.mean)
 
     def train_model(self, state):
@@ -63,23 +68,11 @@ class Controller_AI(Controller, ABC):
         self._model.update(self._state, self._action, reward, self.__preprocess_state(next_state))
 
     def action(self):
-        if self._action == 0:
-            pass
-        elif self._action == 1:
-            self._player.move(-1)
-        elif self._action == 2:
-            self._player.move(1)
-        elif self._action == 3:
-            self._player.shoot_laser()
-        elif self._action == 4:
-            self._player.move(-1)
-            self._player.shoot_laser()
-        elif self._action == 5:
-            self._player.move(1)
-            self._player.shoot_laser()
+        self._action_mapping[self._action]()
 
     def new_episode(self):
         self._new_episode = True
+
 
 class Controller_Human(Controller, ABC):
     def __init__(self, player=None):

@@ -1,18 +1,27 @@
-import numpy as np
+import os
+from constants_general import *
+try:
+    os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
+    os.add_dll_directory(r"C:\Program Files\NVIDIA\CUDNN\v8.1\bin")
+except:
+    print('No se ha encontrado CUDA Toolkit o CUDNN')
+
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
-from keras.losses import *
+import numpy as np
 
 
 class DeepQAgent:
-    def __init__(self, state_size, action_size, model_file=None):
+    def __init__(self, state_size, action_size):
         self._episode_reward = 0
         self._state_size = state_size
         self._action_size = action_size
         self._new_episode = True
         self._optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
         self._done = False
+        self._model_path = '../Data/model.h5'
+        self._action = 0
 
         # Experience replay buffers and training parameters
         self._action_history = []
@@ -24,11 +33,13 @@ class DeepQAgent:
         self._running_reward = 0
         self._episode_count = 0
         self._frame_count = 0
+        self._episode_frames = 0
         self._epsilon_random_frames = 50000
         self._epsilon_greedy_frames = 1000000.0
         self._max_memory_length = 100000
         self._update_after_actions = 4
         self._update_target_network = 10000
+        self._frame_skipping = 4
         self._loss_function = keras.losses.Huber()
 
         # Build the model
@@ -41,8 +52,12 @@ class DeepQAgent:
         self._max_steps_per_episode = 10000
         self._model = self.__build_model()
         self._target_model = self.__build_model()
-        if model_file:
-            self._model.load_weights(model_file)
+
+        self._logfile = open('../Data/logfile.txt', 'w')
+
+        if not TRAINING_MODE:
+            self.__load_model()
+
 
     def __build_model(self):
         # Input layer of shape 80x80
@@ -66,41 +81,58 @@ class DeepQAgent:
 
     def train(self, state, new_episode=False):
         if not self._done:
-            self._frame_count += 1
-            self._new_episode = new_episode
-            if self._frame_count % 100 == 0:
-                print("Frame count: {}".format(self._frame_count))
-
-            if self._frame_count >= self._max_steps_per_episode:
-                self._new_episode = True
 
             if self._new_episode:
+                template = "Running reward: {:.2f} at episode {}, frame count {}"
+                print(template.format(self._running_reward, self._episode_count, self._frame_count))
+                self._logfile.write(template.format(self._running_reward, self._episode_count, self._frame_count))
                 self._episode_count += 1
                 self._new_episode = False
-                self._frame_count = 0
+                self._episode_frames = 0
                 self._episode_reward = 0
+
+            if not self._frame_count % self._frame_skipping == 0:
+                self._frame_count += 1
+                self._episode_frames += 1
+                return self._action
+
+
+            if self._episode_frames % 60 == 0:
+                print("Frame count: {}".format(self._frame_count))
                 print('Episode: {}'.format(self._episode_count))
+                print('Episode reward: {}'.format(self._episode_reward))
+
+            self._frame_count += 1
+            self._episode_frames += 1
+            self._new_episode = new_episode
+
+            if self._episode_frames >= self._max_steps_per_episode:
+                self._new_episode = True
 
             if self._frame_count < self._epsilon_random_frames or self._epsilon > np.random.rand(1)[0]:
                 # Take random action
-                action = np.random.choice(self._action_size)
+                self._action = np.random.choice(self._action_size)
             else:
                 # Predict the Q values for the next state
                 state_tensor = tf.convert_to_tensor(state)
                 state_tensor = tf.expand_dims(state_tensor, 0)
                 action_probs = self._model(state_tensor, training=False)
+
                 # Take best action
-                action = tf.argmax(action_probs[0]).numpy()
+                self._action = tf.argmax(action_probs[0]).numpy()
 
             self._epsilon -= self._epsilon_decay / self._epsilon_greedy_frames
             self._epsilon = max(self._epsilon, self._epsilon_min)
 
-            return action
+            return self._action
         else:
             print("Solved at episode {}!".format(self._episode_count))
+            self._logfile.write("Solved at episode {}!".format(self._episode_count))
 
     def update(self, state, action, reward, state_next):
         if not self._done:
+            if not self._frame_count % self._frame_skipping == 0:
+                return
 
             self._episode_reward += reward
 
@@ -144,6 +176,7 @@ class DeepQAgent:
 
                     # Apply the masks to the Q-values to get the Q-value for action taken
                     q_action = tf.reduce_sum(tf.multiply(q_values, masks), axis=1)
+
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
 
@@ -154,11 +187,8 @@ class DeepQAgent:
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
                 self._target_model.set_weights(self._model.get_weights())
-                # Log details
-                template = "running reward: {:.2f} at episode {}, frame count {}"
-                print(template.format(self._running_reward, self._episode_count, self._frame_count))
 
-                # Limit the state and reward history
+            # Limit the state and reward history
             if len(self._rewards_history) > self._max_memory_length:
                 del self._rewards_history[:1]
                 del self._state_history[:1]
@@ -166,17 +196,25 @@ class DeepQAgent:
                 del self._action_history[:1]
                 del self._done_history[:1]
 
-
-                # Update running reward to check condition for solving
+            # Update running reward to check condition for solving
             self._episode_reward_history.append(self._episode_reward)
             if len(self._episode_reward_history) > 100:
                 del self._episode_reward_history[:1]
-            running_reward = np.mean(self._episode_reward_history)
+            self._running_reward = np.mean(self._episode_reward_history)
 
-            if running_reward > 2000:  # Condition to consider the task solved
+            if self._running_reward > 2000:  # Condition to consider the task solved
                 print("Solved at episode {}!".format(self._episode_count))
+                self._logfile.write("Solved at episode {}!".format(self._episode_count))
                 self._done = True
 
+    def __save_model(self):
+        self._model.save(self._model_path)
+
+
+    def __load_model(self):
+        self._model = tf.keras.models.load_model(self._model_path)
+        self._target_model = tf.keras.models.load_model(self._model_path)
+        self._target_model.set_weights(self._model.get_weights())
 
     @property
     def new_episode(self):

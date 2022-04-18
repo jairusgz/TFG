@@ -1,6 +1,6 @@
 import pygame as pg
 import pygame_menu
-
+from time import sleep
 from game_manager import GameManager
 from constants_general import *
 
@@ -112,7 +112,6 @@ class GameScreen:
         """
         self.__setup_game()
         clock = pg.time.Clock()
-
         while self._game_manager.game_status != Game_status.GAME_OVER:
             for e in pg.event.get():
                 if e.type == pg.QUIT:

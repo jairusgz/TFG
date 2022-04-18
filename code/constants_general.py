@@ -17,6 +17,7 @@ MENU_SIZE = [300, 400]
 # Game
 SPEED_INCREMENT = 1.02
 
+
 # Player
 PLAYER_LASER_CD = 800
 

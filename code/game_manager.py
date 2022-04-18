@@ -26,7 +26,6 @@ class GameManager:
         self._game_status = Game_status.UNINITIALIZED
         self._speed_modifier = None
         self._high_scores = None
-        self._reward = 0
 
         # Player and controller
         self._player_sprite = None
@@ -60,6 +59,7 @@ class GameManager:
             self._player_name = 'AI'
             if controller:
                 self._controller = controller
+                self._controller.new_episode()
             else:
                 self._controller = Controller_AI()
 
@@ -112,9 +112,8 @@ class GameManager:
         self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
         self._shoot_count = 0
 
-
     def run(self, surface):
-        self._reward = 0
+        actual_score = self._score
         if self._game_status == Game_status.PLAYABLE_SCREEN:
             if self._ai_player and TRAINING_MODE:
                 self._controller.train_model(pg.surfarray.array3d(surface))
@@ -130,8 +129,9 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
+            reward = self._score - actual_score
             if self._ai_player and TRAINING_MODE:
-                self._controller.update_model(pg.surfarray.array3d(surface), self._reward)
+                self._controller.update_model(pg.surfarray.array3d(surface), reward)
             self._controller.action()
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
@@ -185,6 +185,7 @@ class GameManager:
 
     def __mothership_spawn(self):
         if self._aliens.sprites():
+
             if self._mothership_count == self._mothership_cd:
                 self._mothership.add(
                     Mothership(ct.MOTHERSHIP_Y, ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']),
@@ -204,7 +205,7 @@ class GameManager:
                 alien_collisions = pg.sprite.spritecollide(laser, self._aliens, dokill=True)
                 if alien_collisions:
                     self._score += alien_collisions[0].value
-                    self._reward = alien_collisions[0].value / 30
+                    self._reward = alien_collisions[0].value / 150
                     laser.kill()
                     self._speed_modifier *= SPEED_INCREMENT
                     if self._alien_direction < 0:
@@ -221,7 +222,6 @@ class GameManager:
                 if pg.sprite.spritecollide(laser, self._mothership, dokill=True):
                     laser.kill()
                     self._score += self.__calculate_mothership_value()
-                    self._reward = 1
 
                 # TODO Colisiones con los obstaculos
 
@@ -230,7 +230,6 @@ class GameManager:
             for laser in self._alien_lasers:
                 if pg.sprite.spritecollide(laser, self._player, dokill=False):
                     laser.kill()
-                    self._reward = -1
                     if self._lives > 1:
                         self._lives -= 1
                     else:
@@ -251,12 +250,10 @@ class GameManager:
         if self._aliens:
             for alien in self._aliens:
                 if alien.rect.bottom >= ct.ALIEN_MAX_Y:
-                    self._reward = -1
                     if self._ai_player and TRAINING_MODE:
                         self.__final_screen()
                     else:
                         self._game_status = Game_status.FINAL_SCREEN
-
 
     def __calculate_mothership_value(self):
         """
@@ -272,7 +269,6 @@ class GameManager:
 
     def __final_screen(self):
         if self._ai_player and TRAINING_MODE:
-            self._controller.new_episode()
             self.setup(ai_player=True, controller=self._controller)
         else:
             self.__write_high_scores()
