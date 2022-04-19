@@ -1,5 +1,6 @@
 import os
 from constants_general import *
+
 try:
     os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
     os.add_dll_directory(r"C:\Program Files\NVIDIA\CUDNN\v8.1\bin")
@@ -32,6 +33,7 @@ class DeepQAgent:
         self._episode_reward_history = []
         self._running_reward = 0
         self._episode_count = 0
+        self._temp_reward = 0
         self._frame_count = 0
         self._episode_frames = 0
         self._epsilon_random_frames = 50000
@@ -54,10 +56,11 @@ class DeepQAgent:
         self._target_model = self.__build_model()
 
         self._logfile = open('../Data/logfile.txt', 'w')
+        self._objective_reward = 2000
+        self._max_training_frames = 10000000
 
         if not TRAINING_MODE:
             self.__load_model()
-
 
     def __build_model(self):
         # Input layer of shape 80x80
@@ -96,7 +99,6 @@ class DeepQAgent:
                 self._episode_frames += 1
                 return self._action
 
-
             if self._episode_frames % 60 == 0:
                 print("Frame count: {}".format(self._frame_count))
                 print('Episode: {}'.format(self._episode_count))
@@ -128,13 +130,17 @@ class DeepQAgent:
         else:
             print("Solved at episode {}!".format(self._episode_count))
             self._logfile.write("Solved at episode {}!".format(self._episode_count))
+            self.__save_model()
+            self._logfile.close()
 
     def update(self, state, action, reward, state_next):
         if not self._done:
+            self._temp_reward += reward
             if not self._frame_count % self._frame_skipping == 0:
                 return
 
-            self._episode_reward += reward
+            self._episode_reward += self._temp_reward
+            self._temp_reward = 0
 
             # Save actions and states in replay buffer
             self._action_history.append(action)
@@ -202,14 +208,15 @@ class DeepQAgent:
                 del self._episode_reward_history[:1]
             self._running_reward = np.mean(self._episode_reward_history)
 
-            if self._running_reward > 2000:  # Condition to consider the task solved
+            if self._running_reward > self._objective_reward or self._frame_count >= 10000:
                 print("Solved at episode {}!".format(self._episode_count))
                 self._logfile.write("Solved at episode {}!".format(self._episode_count))
+                self._logfile.close()
+                self.__save_model()
                 self._done = True
 
     def __save_model(self):
         self._model.save(self._model_path)
-
 
     def __load_model(self):
         self._model = tf.keras.models.load_model(self._model_path)
@@ -220,3 +227,6 @@ class DeepQAgent:
     def new_episode(self):
         return self._new_episode
 
+    @property
+    def done(self):
+        return self._done

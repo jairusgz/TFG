@@ -73,6 +73,9 @@ class Controller_AI(Controller, ABC):
     def new_episode(self):
         self._new_episode = True
 
+    def model_trained(self):
+        return self._model.done
+
 
 class Controller_Human(Controller, ABC):
     def __init__(self, player=None):
