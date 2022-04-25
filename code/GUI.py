@@ -1,8 +1,8 @@
 import pygame as pg
 import pygame_menu
-from time import sleep
+import os
 from game_manager import GameManager
-from constants_general import *
+from game_parameters import *
 
 
 class GameScreen:
@@ -21,7 +21,7 @@ class GameScreen:
 
         # Game parameters
         self._player_name = 'Unnamed'
-        self._ai_player = False
+        self._ai_player = True
 
         # Menu setup
         self._menu = pygame_menu.Menu(
@@ -40,7 +40,13 @@ class GameScreen:
 
     # Start the program by starting the mainloop from the menu
     def run(self):
-        self._menu.mainloop(self._surface)
+        if TRAINING_MODE:
+            self._ai_player = True
+            self._player_name = 'AI'
+            self.__run_game()
+            os.environ['SDL_VIDEODRIVER'] = 'dummy'
+        else:
+            self._menu.mainloop(self._surface)
 
     # Change player type, called from the selector widget when the value is changed
     def __change_player(self, values, selected_value):
@@ -52,19 +58,13 @@ class GameScreen:
 
     # Setup the game manager and import the constants for the player or the AI
     def __setup_game(self):
-        global ct
-        if self._ai_player:
-            import constants_ai as ct
-            pg.display.set_mode(ct.SCREEN_RES)
-        else:
-            import constants_player as ct
 
         self._game_manager.setup(self._ai_player, self._player_name)
-        self._lives_img = pg.transform.scale(self._lives_img, ct.LIVES_IMG_DIMENSIONS)
+        self._lives_img = pg.transform.scale(self._lives_img, LIVES_IMG_DIMENSIONS)
 
     # Show the score on the top-left corner of the screen
     def __show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', ct.SCORE_FONT_SIZE).render(
+        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render(
                                   'SCORE: ' + str(self._game_manager.score), False, 'white')
 
         score_rect = score_surf.get_rect(topleft=[0, 0])
@@ -72,10 +72,10 @@ class GameScreen:
 
     # Show the lives on the top-right corner of the screen
     def __show_lives(self):
-        x = ct.LIVES_X_START
+        x = LIVES_X_START
         for live in range(self._game_manager.lives - 1):
-            x -= (live * ct.LIVES_IMG_DIMENSIONS[0] + ct.LIVES_SPACE)
-            self._surface.blit(self._lives_img, (x, ct.LIVES_Y))
+            x -= (live * LIVES_IMG_DIMENSIONS[0] + LIVES_SPACE)
+            self._surface.blit(self._lives_img, (x, LIVES_Y))
 
     # Draw all the objects of the game
     def __draw_sprites(self):
@@ -87,13 +87,13 @@ class GameScreen:
 
     # Show the final screen and wait for the user to press ESC to return to the menu
     def __show_final_screen(self):
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
-        final_rect = final_surf.get_rect(center=ct.GAME_OVER_CENTER_POS)
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
+        final_rect = final_surf.get_rect(center=GAME_OVER_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
 
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', ct.RETURN_FONT_SIZE).render('Press Esc to return', False,
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
                                                                                            'white')
-        final_rect = final_surf.get_rect(center=ct.RETURN_CENTER_POS)
+        final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
 
         keys = pg.key.get_pressed()
@@ -122,7 +122,7 @@ class GameScreen:
             if self._game_manager.game_status == Game_status.FINAL_SCREEN:
                 self.__show_final_screen()
             else:
-                self._surface.fill([87, 72, 0], rect=(ct.PLANET_X, ct.PLANET_Y, ct.PLANET_WIDTH, ct.PLANET_HEIGHT))
+                self._surface.fill([87, 72, 0], rect=(PLANET_X, PLANET_Y, PLANET_WIDTH, PLANET_HEIGHT))
                 self._game_manager.run(self._surface)
                 self.__draw_sprites()
                 self.__show_lives()

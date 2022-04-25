@@ -3,7 +3,7 @@ import pandas as pd
 
 from controller import *
 from laser import Laser
-from constants_general import *
+from game_parameters import *
 from alien import Alien, Mothership
 from random import choice, randint
 
@@ -52,10 +52,9 @@ class GameManager:
         self._score = 0
 
     def setup(self, ai_player, player_name='AI', controller=None):
-        global ct
+
         self._ai_player = ai_player
         if ai_player:
-            import constants_ai as ct
             self._player_name = 'AI'
             if controller:
                 self._controller = controller
@@ -64,24 +63,23 @@ class GameManager:
                 self._controller = Controller_AI()
 
         else:
-            import constants_player as ct
             self._player_name = player_name.upper()
             self._controller = Controller_Human()
 
         self._level = 1
         self._speed_modifier = 1
-        self._player_sprite = Player(ct.PLAYER_START_POS, ct.PLAYER_DIMENSIONS, ct.PLAYER_SPEED, ct.LASER_SPEED,
-                                     ct.LASER_DIMENSIONS, ct.SCREEN_RES)
+        self._player_sprite = Player(PLAYER_START_POS, PLAYER_DIMENSIONS, PLAYER_SPEED, LASER_SPEED,
+                                     LASER_DIMENSIONS, SCREEN_RES)
         self._player = pg.sprite.GroupSingle(self._player_sprite)
 
         self._controller.set_player(self._player_sprite)
 
-        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
-                           ct.ALIEN_Y_SPACING)
+        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ALIEN_START_POS, ALIEN_X_SPACING,
+                           ALIEN_Y_SPACING)
 
         self._high_scores = pd.read_csv('../Data/high_scores.csv')
 
-        self._alien_direction = ct.ALIEN_X_SPEED
+        self._alien_direction = ALIEN_X_SPEED
         self._shoot_count = 0
         self._shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
 
@@ -104,12 +102,12 @@ class GameManager:
         self._speed_modifier = 1 + self._level / 10
 
         # Reset the aliens and the mothership timer and value
-        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ct.ALIEN_START_POS, ct.ALIEN_X_SPACING,
-                           ct.ALIEN_Y_SPACING)
+        self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ALIEN_START_POS, ALIEN_X_SPACING,
+                           ALIEN_Y_SPACING)
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
         self._mothership_count = 0
         self._mothership_score = 70
-        self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
+        self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
         self._shoot_count = 0
 
     def run(self, surface):
@@ -146,7 +144,7 @@ class GameManager:
                     color = 'red'
                     value = 10
 
-                alien = Alien(ct.ALIEN_IMAGE_SIZE, color, [x_coord, y_coord], value)
+                alien = Alien(ALIEN_IMAGE_SIZE, color, [x_coord, y_coord], value)
                 self._aliens.add(alien)
                 x_coord += x_spacing
             y_coord += y_spacing
@@ -155,12 +153,12 @@ class GameManager:
     def __alien_border_constraint(self):
         aliens = self._aliens.sprites()
         for alien in aliens:
-            if alien.rect.right >= ct.SCREEN_WIDTH:
-                self._alien_direction = - ct.ALIEN_X_SPEED * self._speed_modifier
-                self.__alien_hit_border(ct.ALIEN_Y_SPEED)
+            if alien.rect.right >= SCREEN_WIDTH:
+                self._alien_direction = - ALIEN_X_SPEED * self._speed_modifier
+                self.__alien_hit_border(ALIEN_Y_SPEED)
             elif alien.rect.left <= 0:
-                self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
-                self.__alien_hit_border(ct.ALIEN_Y_SPEED)
+                self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
+                self.__alien_hit_border(ALIEN_Y_SPEED)
 
     def __alien_hit_border(self, y_distance):
         if self._aliens:
@@ -171,7 +169,7 @@ class GameManager:
         if self._aliens.sprites():
             if self._shoot_count == self._shoot_timer:
                 alien = choice(self._aliens.sprites())
-                laser = Laser(alien.rect.center, ct.LASER_SPEED, ct.LASER_DIMENSIONS, ct.SCREEN_HEIGHT)
+                laser = Laser(alien.rect.center, LASER_SPEED, LASER_DIMENSIONS, SCREEN_HEIGHT)
                 self._alien_lasers.add(laser)
                 self._shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
                 self._shoot_count = 0
@@ -184,8 +182,8 @@ class GameManager:
 
             if self._mothership_count == self._mothership_cd:
                 self._mothership.add(
-                    Mothership(ct.MOTHERSHIP_Y, ct.MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']),
-                               ct.MOTHERSHIP_SPEED, ct.SCREEN_RES))
+                    Mothership(MOTHERSHIP_Y, MOTHERSHIP_IMAGE_SIZE, choice(['right', 'left']),
+                               MOTHERSHIP_SPEED, SCREEN_RES))
                 self._mothership_count = 0
                 self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
             else:
@@ -205,9 +203,9 @@ class GameManager:
                     laser.kill()
                     self._speed_modifier *= SPEED_INCREMENT
                     if self._alien_direction < 0:
-                        self._alien_direction = - ct.ALIEN_X_SPEED * self._speed_modifier
+                        self._alien_direction = - ALIEN_X_SPEED * self._speed_modifier
                     else:
-                        self._alien_direction = ct.ALIEN_X_SPEED * self._speed_modifier
+                        self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
 
                     # Advance to next level if all the aliens are killed
                     if not self._aliens:
@@ -245,7 +243,7 @@ class GameManager:
 
         if self._aliens:
             for alien in self._aliens:
-                if alien.rect.bottom >= ct.ALIEN_MAX_Y:
+                if alien.rect.bottom >= ALIEN_MAX_Y:
                     if self._ai_player and TRAINING_MODE:
                         self.__final_screen()
                     else:

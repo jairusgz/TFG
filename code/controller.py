@@ -1,10 +1,9 @@
 from abc import abstractmethod, ABC
-from skimage.measure import block_reduce
 import numpy as np
 import pygame as pg
 from player import Player
 from pygame.locals import *
-from constants_general import *
+from game_parameters import *
 from deep_Q_agent import DeepQAgent
 
 
@@ -33,12 +32,11 @@ class Controller_AI(Controller, ABC):
         self._model = DeepQAgent((84, 84, 4,), 6)
         self._frame_count = 0
         self._frame_memory = []
-        self._state = None
-        self._next_state = None
-        self._score_0 = 0
-        self._score_1 = 0
+        self._score_memory = []
+        self._cumulative_score = 0
         self._done = 0
         self._action = 0
+        self._prev_action = 0
         self._new_episode = False
         self._action_mapping = {0: lambda: self._player.move(0),
                                 1: lambda: self._player.move(-1),
@@ -54,29 +52,29 @@ class Controller_AI(Controller, ABC):
 
         if self._new_episode:
             self._frame_memory = []
-            self._score_0 = 0
-            self._score_1 = 0
+            self._cumulative_score = 0
+            self._score = 0
             self._new_episode = False
-
-        self._score_1 += score
+            self._model.new_episode()
 
         if self._frame_count % 4 == 0:
-            self._score_0 = score
-
+            self._cumulative_score = 0
             self._frame_memory.append(self.__process_frame(frame))
-            reward = self._score_1 - self._score_0
-            self._score_1 = 0
-            if len(self._frame_memory) > 4:
-                self._frame_memory.pop(0)
+            self._score_memory.append(score)
 
-            if len(self._frame_memory) == 4:
-                print(np.array(self._frame_memory).shape)
-                self._model.train(np.array(self._frame_memory))
-                self._model.update(self._frame_memory[-2], self._action, reward, self._frame_memory[-1])
+            if len(self._frame_memory) > 5:
+                self._frame_memory.pop(0)
+                self._score_memory.pop(0)
+
+            if len(self._frame_memory) == 5:
+                reward = self._score_memory[-1] - self._score_memory[-2]
+                self._model.train(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
+                state = np.array(self._frame_memory[:-1]).transpose(2, 1, 0)
+                next_state = np.array(self._frame_memory[1:]).transpose(2, 1, 0)
+                self._model.update(state, self._action, reward, next_state)
 
         self._frame_count += 1
         self._action = self._model.action
-
 
     def __process_frame(self, state):
         arr = np.array(state)
@@ -93,6 +91,7 @@ class Controller_AI(Controller, ABC):
         # Then, we convert the array to grayscale
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
         gray_scale_arr = 0.2989 * r + 0.5870 * g + 0.1140 * b
+
         return gray_scale_arr
 
     def action(self):

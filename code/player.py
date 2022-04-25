@@ -1,6 +1,6 @@
 import pygame as pg
 from laser import Laser
-from constants_general import *
+from game_parameters import *
 
 
 class Player(pg.sprite.Sprite):

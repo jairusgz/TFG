@@ -1,5 +1,5 @@
 import os
-from constants_general import *
+from game_parameters import *
 
 try:
     os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
@@ -14,7 +14,7 @@ import numpy as np
 
 
 class DeepQAgent:
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size, load_model=False):
         self._episode_reward = 0
         self._state_size = state_size
         self._action_size = action_size
@@ -22,6 +22,7 @@ class DeepQAgent:
         self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025)
         self._done = False
         self._model_path = '../Data/model.h5'
+        self._optimizer_path = '../Data/optimizer_weights'
         self._action = 0
 
         # Experience replay buffers and training parameters
@@ -53,8 +54,12 @@ class DeepQAgent:
         self._target_model = self.__build_model()
 
         self._logfile = open('../Data/logfile.txt', 'w')
+        self._load_optimizer = False
         self._objective_reward = 2000
         self._max_training_frames = 10000000
+
+        if load_model:
+            self.__load_model()
 
         if not TRAINING_MODE:
             self.__load_model()
@@ -64,7 +69,7 @@ class DeepQAgent:
         inputs = layers.Input(shape=self._state_size)
 
         # 3 convolutional layers
-        layer1 = layers.Conv2D(32, 8, strides=4,  activation='relu')(inputs)
+        layer1 = layers.Conv2D(32, 8, strides=4, activation='relu')(inputs)
         layer2 = layers.Conv2D(64, 4, strides=2, activation='relu')(layer1)
         layer3 = layers.Conv2D(64, 3, strides=1, activation='relu')(layer2)
 
@@ -102,7 +107,8 @@ class DeepQAgent:
 
     def update(self, state, action, reward, next_state):
         if not self._done:
-
+            self._frame_count += 4
+            self._episode_frames += 4
             self._episode_reward += reward
 
             # Save actions and states in replay buffer
@@ -152,10 +158,14 @@ class DeepQAgent:
                 # Backpropagation
                 grads = tape.gradient(loss, self._model.trainable_variables)
                 self._optimizer.apply_gradients(zip(grads, self._model.trainable_variables))
+                if self._load_optimizer:
+                    self._optimizer.set_weights(np.load(self._optimizer_path + '.npy', allow_pickle=True))
+                    self._load_optimizer = False
 
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
                 self._target_model.set_weights(self._model.get_weights())
+                self.__save_model()
 
             # Limit the state and reward history
             if len(self._rewards_history) > self._max_memory_length:
@@ -165,13 +175,7 @@ class DeepQAgent:
                 del self._action_history[:1]
                 del self._done_history[:1]
 
-            # Update running reward to check condition for solving
-            self._episode_reward_history.append(self._episode_reward)
-            if len(self._episode_reward_history) > 100:
-                del self._episode_reward_history[:1]
-            self._running_reward = np.mean(self._episode_reward_history)
-
-            if self._running_reward > self._objective_reward or self._frame_count >= 10000:
+            if self._running_reward > self._objective_reward or self._frame_count >= 1000000:
                 print("Solved at episode {}!".format(self._episode_count))
                 self._logfile.write("Solved at episode {}!".format(self._episode_count))
                 self._logfile.close()
@@ -180,20 +184,42 @@ class DeepQAgent:
 
     def __save_model(self):
         self._model.save(self._model_path)
+        np.save(self._optimizer_path, self._optimizer.get_weights())
+        with open('../Data/training_status.csv', 'w') as f:
+            f.write('{}, {}, {}'.format(self._epsilon, self._episode_count, self._frame_count))
+
+
+    def __write_history(self, history, path):
+        with open(path, "a") as file:
+            for item in history:
+                file.write("{}\n".format(item))
 
     def __load_model(self):
         self._model = tf.keras.models.load_model(self._model_path)
         self._target_model = tf.keras.models.load_model(self._model_path)
         self._target_model.set_weights(self._model.get_weights())
+        self._load_optimizer = True
+        with open('../Data/training_status.csv') as f:
+            data = f.readlines()
+            self._epsilon = float(data[0].split(',')[0])
+            self._episode_count = int(data[0].split(',')[1])
+            self._frame_count = int(data[0].split(',')[2])
 
     def new_episode(self):
+
+        # Update running reward to check condition for solving
+        self._episode_reward_history.append(self._episode_reward)
+        if len(self._episode_reward_history) > 100:
+            del self._episode_reward_history[:1]
+        self._running_reward = np.mean(self._episode_reward_history)
+
         print(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
               f'running reward: {self._running_reward}, frames: '
               f'{self._episode_frames}, total frames: {self._frame_count}')
 
         self._logfile.write(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
                             f'running reward: {self._running_reward}, frames: '
-                            f'{self._episode_frames}, total frames: {self._frame_count}')
+                            f'{self._episode_frames}, total frames: {self._frame_count}\n')
         self._logfile.flush()
         self._episode_count += 1
         self._new_episode = False
