@@ -128,7 +128,7 @@ class GameScreen:
                 self.__show_lives()
             self.__show_score()
             pg.display.flip()
-            clock.tick(30)
+            clock.tick(60)
 
         pg.display.set_mode(MENU_SCREEN_SIZE)
 

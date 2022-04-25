@@ -19,7 +19,7 @@ class DeepQAgent:
         self._state_size = state_size
         self._action_size = action_size
         self._new_episode = True
-        self._optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
+        self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025)
         self._done = False
         self._model_path = '../Data/model.h5'
         self._action = 0
@@ -33,25 +33,22 @@ class DeepQAgent:
         self._episode_reward_history = []
         self._running_reward = 0
         self._episode_count = 0
-        self._temp_reward = 0
         self._frame_count = 0
         self._episode_frames = 0
         self._epsilon_random_frames = 50000
         self._epsilon_greedy_frames = 1000000.0
-        self._max_memory_length = 100000
+        self._max_memory_length = 1000000
         self._update_after_actions = 4
         self._update_target_network = 10000
-        self._frame_skipping = 4
         self._loss_function = keras.losses.Huber()
 
         # Build the model
-        self._gamma = 0.99
-        self._epsilon = 1.0
+        self._gamma = 0.99  # Discount factor
+        self._epsilon = 1.0  # Epsilon-greedy parameter
         self._epsilon_min = 0.1
         self._epsilon_decay = 0.995
         self._learning_rate = 0.0002
         self._batch_size = 32
-        self._max_steps_per_episode = 10000
         self._model = self.__build_model()
         self._target_model = self.__build_model()
 
@@ -63,11 +60,11 @@ class DeepQAgent:
             self.__load_model()
 
     def __build_model(self):
-        # Input layer of shape 80x80
+        # Input layer of shape 84x84
         inputs = layers.Input(shape=self._state_size)
 
         # 3 convolutional layers
-        layer1 = layers.Conv2D(32, 8, strides=4, activation='relu')(inputs)
+        layer1 = layers.Conv2D(32, 8, strides=4,  activation='relu')(inputs)
         layer2 = layers.Conv2D(64, 4, strides=2, activation='relu')(layer1)
         layer3 = layers.Conv2D(64, 3, strides=1, activation='relu')(layer2)
 
@@ -80,36 +77,13 @@ class DeepQAgent:
         # Output layer
         output = layers.Dense(self._action_size, activation='linear')(layer5)
 
-        return keras.Model(inputs=inputs, outputs=output)
+        model = keras.Model(inputs=inputs, outputs=output)
 
-    def train(self, state, new_episode=False):
+        return model
+
+    def train(self, state):
+        # Here, state is the last 4 stacked frames of the game
         if not self._done:
-
-            if self._new_episode:
-                template = "Running reward: {:.2f} at episode {}, frame count {}"
-                print(template.format(self._running_reward, self._episode_count, self._frame_count))
-                self._logfile.write(template.format(self._running_reward, self._episode_count, self._frame_count))
-                self._episode_count += 1
-                self._new_episode = False
-                self._episode_frames = 0
-                self._episode_reward = 0
-
-            if not self._frame_count % self._frame_skipping == 0:
-                self._frame_count += 1
-                self._episode_frames += 1
-                return self._action
-
-            if self._episode_frames % 60 == 0:
-                print("Frame count: {}".format(self._frame_count))
-                print('Episode: {}'.format(self._episode_count))
-                print('Episode reward: {}'.format(self._episode_reward))
-
-            self._frame_count += 1
-            self._episode_frames += 1
-            self._new_episode = new_episode
-
-            if self._episode_frames >= self._max_steps_per_episode:
-                self._new_episode = True
 
             if self._frame_count < self._epsilon_random_frames or self._epsilon > np.random.rand(1)[0]:
                 # Take random action
@@ -126,26 +100,15 @@ class DeepQAgent:
             self._epsilon -= self._epsilon_decay / self._epsilon_greedy_frames
             self._epsilon = max(self._epsilon, self._epsilon_min)
 
-            return self._action
-        else:
-            print("Solved at episode {}!".format(self._episode_count))
-            self._logfile.write("Solved at episode {}!".format(self._episode_count))
-            self.__save_model()
-            self._logfile.close()
-
-    def update(self, state, action, reward, state_next):
+    def update(self, state, action, reward, next_state):
         if not self._done:
-            self._temp_reward += reward
-            if not self._frame_count % self._frame_skipping == 0:
-                return
 
-            self._episode_reward += self._temp_reward
-            self._temp_reward = 0
+            self._episode_reward += reward
 
             # Save actions and states in replay buffer
             self._action_history.append(action)
             self._state_history.append(state)
-            self._state_next_history.append(state_next)
+            self._state_next_history.append(next_state)
             self._done_history.append(self._done)
             self._rewards_history.append(reward)
 
@@ -223,10 +186,24 @@ class DeepQAgent:
         self._target_model = tf.keras.models.load_model(self._model_path)
         self._target_model.set_weights(self._model.get_weights())
 
-    @property
     def new_episode(self):
-        return self._new_episode
+        print(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
+              f'running reward: {self._running_reward}, frames: '
+              f'{self._episode_frames}, total frames: {self._frame_count}')
+
+        self._logfile.write(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
+                            f'running reward: {self._running_reward}, frames: '
+                            f'{self._episode_frames}, total frames: {self._frame_count}')
+        self._logfile.flush()
+        self._episode_count += 1
+        self._new_episode = False
+        self._episode_frames = 0
+        self._episode_reward = 0
 
     @property
     def done(self):
         return self._done
+
+    @property
+    def action(self):
+        return self._action

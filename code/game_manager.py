@@ -59,7 +59,7 @@ class GameManager:
             self._player_name = 'AI'
             if controller:
                 self._controller = controller
-                self._controller.new_episode()
+                self._controller.set_new_episode()
             else:
                 self._controller = Controller_AI()
 
@@ -113,11 +113,9 @@ class GameManager:
         self._shoot_count = 0
 
     def run(self, surface):
-        actual_score = self._score
         if self._game_status == Game_status.PLAYABLE_SCREEN:
             if self._ai_player and TRAINING_MODE:
-                self._controller.train_model(pg.surfarray.array3d(surface))
-
+                self._controller.stack_frame(pg.surfarray.array3d(surface), self._score)
             self.__check_collisions()
 
             self._player.update()
@@ -129,9 +127,7 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
-            reward = self._score - actual_score
-            if self._ai_player and TRAINING_MODE:
-                self._controller.update_model(pg.surfarray.array3d(surface), reward)
+
             self._controller.action()
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):

@@ -30,10 +30,13 @@ class Controller(ABC):
 class Controller_AI(Controller, ABC):
     def __init__(self, player=None):
         super().__init__(player)
-        self._model = DeepQAgent((80, 80, 1,), 6)
+        self._model = DeepQAgent((84, 84, 4,), 6)
+        self._frame_count = 0
+        self._frame_memory = []
         self._state = None
         self._next_state = None
-        self._reward = 0
+        self._score_0 = 0
+        self._score_1 = 0
         self._done = 0
         self._action = 0
         self._new_episode = False
@@ -44,34 +47,63 @@ class Controller_AI(Controller, ABC):
                                 4: lambda: self._player.move(-1) and self._player.shoot_laser(),
                                 5: lambda: self._player.move(1) and self._player.shoot_laser()}
 
-    def __preprocess_state(self, state):
+    def stack_frame(self, frame, score):
+        """
+        Processes every 4th frame and stacks last 4 processed frames. Then trains the model with the stacked frames.
+        """
+
+        if self._new_episode:
+            self._frame_memory = []
+            self._score_0 = 0
+            self._score_1 = 0
+            self._new_episode = False
+
+        self._score_1 += score
+
+        if self._frame_count % 4 == 0:
+            self._score_0 = score
+
+            self._frame_memory.append(self.__process_frame(frame))
+            reward = self._score_1 - self._score_0
+            self._score_1 = 0
+            if len(self._frame_memory) > 4:
+                self._frame_memory.pop(0)
+
+            if len(self._frame_memory) == 4:
+                print(np.array(self._frame_memory).shape)
+                self._model.train(np.array(self._frame_memory))
+                self._model.update(self._frame_memory[-2], self._action, reward, self._frame_memory[-1])
+
+        self._frame_count += 1
+        self._action = self._model.action
+
+
+    def __process_frame(self, state):
         arr = np.array(state)
-        # First, we crop the image to remove the top and bottom of the screen
-        arr = arr[:160, 27:187]
+        # First, we crop the image to remove the top and bottom of the screen, leaving a 480x480 image.
+        arr = arr[:480, 81:561].copy(order='C')
+
+        #Then, we downscale the image to 84x84
+        img = pg.image.frombuffer(arr, (480, 480), 'RGB')
+        img = pg.transform.scale(img, (84, 84))
+
+        #We get the pixel array from the new image
+        arr = pg.surfarray.array3d(img)
 
         # Then, we convert the array to grayscale
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
         gray_scale_arr = 0.2989 * r + 0.5870 * g + 0.1140 * b
-
-        # We normalize the array
-        gray_scale_arr /= 255
-
-        # Finally, we downsample the array to a 80x80 shape
-        return block_reduce(gray_scale_arr, block_size=(2, 2), func=np.mean)
-
-    def train_model(self, state):
-        self._state = self.__preprocess_state(state)
-        self._action = self._model.train(self._state, new_episode=self._new_episode)
-        self._new_episode = False
-
-    def update_model(self, next_state, reward):
-        self._model.update(self._state, self._action, reward, self.__preprocess_state(next_state))
+        return gray_scale_arr
 
     def action(self):
         self._action_mapping[self._action]()
 
-    def new_episode(self):
+    def set_new_episode(self):
         self._new_episode = True
+
+    @property
+    def new_episode(self):
+        return self._new_episode
 
     def model_trained(self):
         return self._model.done
