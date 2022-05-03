@@ -4,18 +4,13 @@ import math
 
 
 class Alien(pg.sprite.Sprite):
-    def __init__(self, dimensions, color, initial_pos, value):
+    def __init__(self, dimensions, initial_pos, img_path):
         super().__init__()
-        self._image_paths = {'red': os.path.join('../Resources', 'red.png'),
-                             'yellow': os.path.join('../Resources', 'yellow.png'),
-                             'green': os.path.join('../Resources', 'green.png')}
-
-        img_path = self._image_paths[color]
         self._image = pg.image.load(img_path).convert_alpha()
         self._image = pg.transform.scale(self._image, dimensions)
         self._rect = self._image.get_rect(topleft=initial_pos)
         self._absolute_x = self._rect.x
-        self._value = value
+        self._value = 0
 
     def update(self, direction):
         self._absolute_x += direction
@@ -32,6 +27,27 @@ class Alien(pg.sprite.Sprite):
     @property
     def image(self):
         return self._image
+
+
+class Alien_red(Alien):
+    def __init__(self, dimensions, initial_pos):
+        img_path = os.path.join('../Resources', 'red.png')
+        super().__init__(dimensions, initial_pos, img_path)
+        self._value = 10
+
+
+class Alien_green(Alien):
+    def __init__(self, dimensions, initial_pos):
+        img_path = os.path.join('../Resources', 'green.png')
+        super().__init__(dimensions, initial_pos, img_path)
+        self._value = 20
+
+
+class Alien_yellow(Alien):
+    def __init__(self, dimensions, initial_pos):
+        img_path = os.path.join('../Resources', 'yellow.png')
+        super().__init__(dimensions, initial_pos, img_path)
+        self._value = 30
 
 
 class Mothership(pg.sprite.Sprite):

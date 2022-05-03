@@ -4,7 +4,7 @@ from player import Player
 from controller import *
 from laser import Laser
 from game_parameters import *
-from alien import Alien, Mothership
+from alien import *
 from random import choice, randint
 
 
@@ -134,16 +134,12 @@ class GameManager:
             for c in range(columns):
 
                 if r < 1:
-                    color = 'yellow'
-                    value = 30
+                    alien = Alien_red(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
                 elif r < 3:
-                    color = 'green'
-                    value = 20
+                    alien = Alien_green(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
                 else:
-                    color = 'red'
-                    value = 10
+                    alien = Alien_yellow(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
 
-                alien = Alien(ALIEN_IMAGE_SIZE, color, [x_coord, y_coord], value)
                 self._aliens.add(alien)
                 x_coord += x_spacing
             y_coord += y_spacing
