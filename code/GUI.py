@@ -21,7 +21,7 @@ class GameScreen:
 
         # Game parameters
         self._player_name = 'Unnamed'
-        self._ai_player = True
+        self._ai_player = False
 
         # Menu setup
         self._menu = pygame_menu.Menu(
@@ -44,7 +44,6 @@ class GameScreen:
             self._ai_player = True
             self._player_name = 'AI'
             self.__run_game()
-            os.environ['SDL_VIDEODRIVER'] = 'dummy'
         else:
             self._menu.mainloop(self._surface)
 
@@ -128,7 +127,7 @@ class GameScreen:
                 self.__show_lives()
             self.__show_score()
             pg.display.flip()
-            clock.tick(60)
+            clock.tick(FPS)
 
         pg.display.set_mode(MENU_SCREEN_SIZE)
 

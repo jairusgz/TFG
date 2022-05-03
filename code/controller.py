@@ -1,9 +1,7 @@
 from abc import abstractmethod, ABC
 import numpy as np
 import pygame as pg
-from player import Player
-from pygame.locals import *
-from game_parameters import *
+from player import *
 from deep_Q_agent import DeepQAgent
 
 
@@ -33,6 +31,7 @@ class Controller_AI(Controller, ABC):
         self._frame_count = 0
         self._frame_memory = []
         self._score_memory = []
+        self._action_memory = []
         self._cumulative_score = 0
         self._done = 0
         self._action = 0
@@ -49,9 +48,12 @@ class Controller_AI(Controller, ABC):
         """
         Processes every 4th frame and stacks last 4 processed frames. Then trains the model with the stacked frames.
         """
+        self._action = self._model.action
 
         if self._new_episode:
             self._frame_memory = []
+            self._score_memory = []
+            self._action_memory = []
             self._cumulative_score = 0
             self._score = 0
             self._new_episode = False
@@ -61,20 +63,24 @@ class Controller_AI(Controller, ABC):
             self._cumulative_score = 0
             self._frame_memory.append(self.__process_frame(frame))
             self._score_memory.append(score)
+            self._action_memory.append(self._action)
 
             if len(self._frame_memory) > 5:
                 self._frame_memory.pop(0)
                 self._score_memory.pop(0)
+                self._action_memory.pop(0)
 
             if len(self._frame_memory) == 5:
                 reward = self._score_memory[-1] - self._score_memory[-2]
                 self._model.train(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
+
                 state = np.array(self._frame_memory[:-1]).transpose(2, 1, 0)
                 next_state = np.array(self._frame_memory[1:]).transpose(2, 1, 0)
-                self._model.update(state, self._action, reward, next_state)
+                action = self._action_memory[0]
+
+                self._model.update(state, action, reward, next_state)
 
         self._frame_count += 1
-        self._action = self._model.action
 
     def __process_frame(self, state):
         arr = np.array(state)

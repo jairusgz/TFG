@@ -1,6 +1,6 @@
 import pygame.sprite
 import pandas as pd
-
+from player import Player
 from controller import *
 from laser import Laser
 from game_parameters import *
@@ -51,7 +51,7 @@ class GameManager:
         # Score system
         self._score = 0
 
-    def setup(self, ai_player, player_name='AI', controller=None):
+    def setup(self, ai_player, player_name, controller=None):
 
         self._ai_player = ai_player
         if ai_player:
@@ -94,7 +94,6 @@ class GameManager:
 
         # Score system
         self._score = 0
-        self._reward = 0
 
     def __next_level(self):
         # Advance to next level and adjust speed modifier
@@ -199,7 +198,6 @@ class GameManager:
                 alien_collisions = pg.sprite.spritecollide(laser, self._aliens, dokill=True)
                 if alien_collisions:
                     self._score += alien_collisions[0].value
-                    self._reward = alien_collisions[0].value / 150
                     laser.kill()
                     self._speed_modifier *= SPEED_INCREMENT
                     if self._alien_direction < 0:
@@ -210,7 +208,6 @@ class GameManager:
                     # Advance to next level if all the aliens are killed
                     if not self._aliens:
                         self.__next_level()
-                        self._reward = 1
 
                 # Collision with Mothership
                 if pg.sprite.spritecollide(laser, self._mothership, dokill=True):
