@@ -1,6 +1,4 @@
 import pygame.sprite
-import pandas as pd
-from player import Player
 from controller import *
 from laser import Laser
 from game_parameters import *
@@ -17,7 +15,10 @@ class GameManager:
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self, leaderboard_manager):
+
+        self._leaderboard_manager = leaderboard_manager
+
         # Status of the game
         self._ai_player = False
         self._pixel_array = None
@@ -77,8 +78,6 @@ class GameManager:
         self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ALIEN_START_POS, ALIEN_X_SPACING,
                            ALIEN_Y_SPACING)
 
-        self._high_scores = pd.read_csv('../Data/high_scores.csv')
-
         self._alien_direction = ALIEN_X_SPEED
         self._shoot_count = 0
         self._shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
@@ -94,6 +93,8 @@ class GameManager:
 
         # Score system
         self._score = 0
+
+        self._leaderboard_manager.read_high_scores()
 
     def __next_level(self):
         # Advance to next level and adjust speed modifier
@@ -134,11 +135,11 @@ class GameManager:
             for c in range(columns):
 
                 if r < 1:
-                    alien = Alien_red(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
+                    alien = Alien_yellow(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
                 elif r < 3:
                     alien = Alien_green(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
                 else:
-                    alien = Alien_yellow(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
+                    alien = Alien_red(ALIEN_IMAGE_SIZE, (x_coord, y_coord))
 
                 self._aliens.add(alien)
                 x_coord += x_spacing
@@ -262,10 +263,7 @@ class GameManager:
             self._game_status = Game_status.FINAL_SCREEN
 
     def __write_high_scores(self):
-        self._high_scores = self._high_scores.append({'Player_name': self._player_name, 'Score': self._score},
-                                                     ignore_index=True)
-        top_10 = self._high_scores.sort_values(by=['Score'], ascending=False)[:3]
-        top_10.to_csv('../Data/high_scores.csv', index=False)
+        self._leaderboard_manager.write_high_scores(self._player_name, self._score)
 
     @property
     def game_status(self):
