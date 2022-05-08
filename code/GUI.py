@@ -95,7 +95,7 @@ class GameScreen:
         self._surface.blit(final_surf, final_rect)
 
         final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
-                                                                                           'white')
+                                                                                        'white')
         final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
 
@@ -105,7 +105,7 @@ class GameScreen:
 
     def __show_leaderboard(self):
         leaderboard_title_surf = pg.font.Font('../Resources/NES_Font.otf', LEADERBOARD_TITLE_FONT_SIZE).render\
-                                             ('Leaderboard', False, 'white')
+                                             ('Leaderboard', False, 'red')
         leaderboard_title_rect = leaderboard_title_surf.get_rect(center=LEADERBOARD_TITLE_CENTER_POS)
         self._surface.blit(leaderboard_title_surf, leaderboard_title_rect)
 
@@ -120,8 +120,12 @@ class GameScreen:
 
             self._surface.blit(surface, rect)
 
+        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
+                                                                                        'white')
+        final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
+        self._surface.blit(final_surf, final_rect)
+
         keys = pg.key.get_pressed()
-        print(keys[pg.K_ESCAPE])
         if keys[pg.K_ESCAPE]:
             self._leaderboard_screen = False
 
@@ -141,7 +145,6 @@ class GameScreen:
             clock.tick(FPS)
 
         pg.display.set_mode(MENU_SCREEN_SIZE)
-
 
     # Setup a new game and start it
     def __run_game(self):
