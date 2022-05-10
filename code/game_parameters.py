@@ -16,7 +16,7 @@ MENU_SIZE = [300, 400]
 
 # Game
 SPEED_INCREMENT = 1.02
-FPS = 60
+FPS = 480
 FPS_MULTIPLIER = 60 / FPS
 
 # Constantes de Pantalla
@@ -61,7 +61,7 @@ MOTHERSHIP_MAX_CD = 2000
 NUM_LIVES = 3
 
 #AI training
-TRAINING_MODE = False
+TRAINING_MODE = True
 
 
 # Constantes de los Aliens

@@ -52,7 +52,7 @@ class GameManager:
         # Score system
         self._score = 0
 
-    def setup(self, ai_player, player_name, controller=None):
+    def setup(self, ai_player, player_name='AI', controller=None):
 
         self._ai_player = ai_player
         if ai_player:

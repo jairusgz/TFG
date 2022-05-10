@@ -3,6 +3,7 @@ import numpy as np
 import pygame as pg
 from player import *
 from deep_Q_agent import DeepQAgent
+import tensorflow as tf
 
 
 class Controller(ABC):
@@ -74,11 +75,12 @@ class Controller_AI(Controller, ABC):
                 reward = self._score_memory[-1] - self._score_memory[-2]
                 self._model.train(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
 
-                state = np.array(self._frame_memory[:-1]).transpose(2, 1, 0)
-                next_state = np.array(self._frame_memory[1:]).transpose(2, 1, 0)
+                state = tf.convert_to_tensor(np.array(self._frame_memory[:-1]).transpose(2, 1, 0))
+                next_state = tf.convert_to_tensor(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
                 action = self._action_memory[0]
 
                 self._model.update(state, action, reward, next_state)
+
 
         self._frame_count += 1
 

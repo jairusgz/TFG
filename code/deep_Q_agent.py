@@ -1,5 +1,6 @@
 import os
 from game_parameters import *
+import time
 
 try:
     os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
@@ -144,8 +145,9 @@ class DeepQAgent:
 
                 # Create a mask so we only calculate loss on the updated Q-values
                 masks = tf.one_hot(action_sample, self._action_size)
-
+                start = time.time()
                 with tf.GradientTape() as tape:
+
                     # Train the model on the states and updated Q-values
                     q_values = self._model(state_sample.astype(np.float32))
 
@@ -154,13 +156,18 @@ class DeepQAgent:
 
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
-
+                end = time.time()
+                print(f"Loss: {end - start}")
                 # Backpropagation
+
+                start = time.time()
                 grads = tape.gradient(loss, self._model.trainable_variables)
                 self._optimizer.apply_gradients(zip(grads, self._model.trainable_variables))
                 if self._load_optimizer:
                     self._optimizer.set_weights(np.load(self._optimizer_path + '.npy', allow_pickle=True))
                     self._load_optimizer = False
+                end = time.time()
+                print(f'Backpropagation took {end - start} seconds')
 
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
