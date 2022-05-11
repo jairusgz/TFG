@@ -1,6 +1,7 @@
 import pygame as pg
 import pygame_menu
 import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 from game_manager import GameManager
 from game_parameters import *
 from leaderboard_manager import LeaderboardManager
