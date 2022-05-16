@@ -157,9 +157,10 @@ class DeepQAgent:
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
                 end = time.time()
-                print(f"Loss: {end - start}")
-                # Backpropagation
+                if DEBUG:
+                    print(f"Loss took {end - start} seconds")
 
+                # Backpropagation
                 start = time.time()
                 grads = tape.gradient(loss, self._model.trainable_variables)
                 self._optimizer.apply_gradients(zip(grads, self._model.trainable_variables))
@@ -167,7 +168,8 @@ class DeepQAgent:
                     self._optimizer.set_weights(np.load(self._optimizer_path + '.npy', allow_pickle=True))
                     self._load_optimizer = False
                 end = time.time()
-                print(f'Backpropagation took {end - start} seconds')
+                if DEBUG:
+                    print(f'Backpropagation took {end - start} seconds')
 
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
@@ -194,7 +196,6 @@ class DeepQAgent:
         np.save(self._optimizer_path, self._optimizer.get_weights())
         with open('../Data/training_status.csv', 'w') as f:
             f.write('{}, {}, {}'.format(self._epsilon, self._episode_count, self._frame_count))
-
 
     def __write_history(self, history, path):
         with open(path, "a") as file:
