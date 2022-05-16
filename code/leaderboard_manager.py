@@ -1,19 +1,16 @@
 import pandas as pd
-import numpy as np
-import os
 
 
 class LeaderboardManager:
-    def __init__(self):
-        self._leaderboard_path = '../Data/high_scores.csv'
-        self._high_scores = self.read_high_scores()
-        self.read_high_scores()
+    _leaderboard_path = '../Data/high_scores.csv'
 
-    def write_high_scores(self, player_name, player_score):
-        self._high_scores = self._high_scores.append({'Player_name': player_name, 'Score': player_score},
-                                                     ignore_index=True)
-        top = self._high_scores.sort_values(by=['Score'], ascending=False)[:3]
-        top.to_csv(self._leaderboard_path, index=False)
+    @classmethod
+    def write_high_scores(cls, player_name, player_score):
+        scores = LeaderboardManager.read_high_scores()
+        scores = scores.append({'Player_name': player_name, 'Score': player_score}, ignore_index=True)
+        top = scores.sort_values(by=['Score'], ascending=False)[:3]
+        top.to_csv(LeaderboardManager._leaderboard_path, index=False)
 
-    def read_high_scores(self):
-        return pd.read_csv(self._leaderboard_path)
+    @classmethod
+    def read_high_scores(cls):
+        return pd.read_csv(LeaderboardManager._leaderboard_path)

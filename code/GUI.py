@@ -1,10 +1,10 @@
+from game_parameters import *
 import pygame as pg
 import pygame_menu
 import os
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-print('Dummy video driver')
+if TRAINING_MODE:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
 from game_manager import GameManager
-from game_parameters import *
 from leaderboard_manager import LeaderboardManager
 
 
@@ -17,8 +17,7 @@ class GameScreen:
 
         # Surface and Game Manager
         self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
-        self._leaderboard_manager = LeaderboardManager()
-        self._game_manager = GameManager(self._leaderboard_manager)
+        self._game_manager = GameManager()
         self._leaderboard_screen = False
 
         # Player image, displayed at the top right as the number of lives
@@ -111,7 +110,7 @@ class GameScreen:
         leaderboard_title_rect = leaderboard_title_surf.get_rect(center=LEADERBOARD_TITLE_CENTER_POS)
         self._surface.blit(leaderboard_title_surf, leaderboard_title_rect)
 
-        leaderboard_data = self._leaderboard_manager.read_high_scores()
+        leaderboard_data = LeaderboardManager.read_high_scores()
         center_pos = LEADERBOARD_CENTER_POS[0], LEADERBOARD_CENTER_POS[1] - 40
 
         for i, d in enumerate(leaderboard_data.iterrows()):

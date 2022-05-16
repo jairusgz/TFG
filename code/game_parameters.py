@@ -61,7 +61,7 @@ MOTHERSHIP_MAX_CD = 2000
 NUM_LIVES = 3
 
 #AI training
-TRAINING_MODE = True
+TRAINING_MODE = False
 
 
 # Constantes de los Aliens

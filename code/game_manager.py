@@ -4,6 +4,7 @@ from laser import Laser
 from game_parameters import *
 from alien import *
 from random import choice, randint
+from leaderboard_manager import *
 
 
 class GameManager:
@@ -15,9 +16,8 @@ class GameManager:
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self, leaderboard_manager):
+    def __init__(self):
 
-        self._leaderboard_manager = leaderboard_manager
 
         # Status of the game
         self._ai_player = False
@@ -93,8 +93,6 @@ class GameManager:
 
         # Score system
         self._score = 0
-
-        self._leaderboard_manager.read_high_scores()
 
     def __next_level(self):
         # Advance to next level and adjust speed modifier
@@ -263,7 +261,7 @@ class GameManager:
             self._game_status = Game_status.FINAL_SCREEN
 
     def __write_high_scores(self):
-        self._leaderboard_manager.write_high_scores(self._player_name, self._score)
+        LeaderboardManager.write_high_scores(self._player_name, self._score)
 
     @property
     def game_status(self):
