@@ -1,19 +1,16 @@
-from abc import abstractmethod, ABC
 import numpy as np
-import pygame as pg
 from player import *
 from deep_Q_agent import DeepQAgent
 import tensorflow as tf
 
 
-class Controller(ABC):
+class Controller:
     def __init__(self, player):
         self._player = player
         self._state = None
         self._next_state = None
         self._score = 0
 
-    @abstractmethod
     def action(self):
         pass
 
@@ -25,7 +22,7 @@ class Controller(ABC):
         self._player = player
 
 
-class Controller_AI(Controller, ABC):
+class Controller_AI(Controller):
     def __init__(self, player=None):
         super().__init__(player)
         self._model = DeepQAgent((84, 84, 4,), 6)
@@ -81,7 +78,6 @@ class Controller_AI(Controller, ABC):
 
                 self._model.update(state, action, reward, next_state)
 
-
         self._frame_count += 1
 
     def __process_frame(self, state):
@@ -116,7 +112,7 @@ class Controller_AI(Controller, ABC):
         return self._model.done
 
 
-class Controller_Human(Controller, ABC):
+class Controller_Human(Controller):
     def __init__(self, player=None):
         super().__init__(player)
 
