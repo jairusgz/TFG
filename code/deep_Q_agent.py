@@ -59,10 +59,7 @@ class DeepQAgent:
         self._objective_reward = 2000
         self._max_training_frames = 10000000
 
-        if load_model:
-            self.__load_model()
-
-        if not TRAINING_MODE:
+        if load_model or not TRAINING_MODE:
             self.__load_model()
 
     def __build_model(self):

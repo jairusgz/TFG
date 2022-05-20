@@ -113,6 +113,8 @@ class GameManager:
         if self._game_status == Game_status.PLAYABLE_SCREEN:
             if self._ai_player and TRAINING_MODE:
                 self._controller.stack_frame(pg.surfarray.array3d(surface), self._score)
+
+            self._controller.action()
             self.__check_collisions()
 
             self._player.update()
@@ -124,8 +126,6 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
-
-            self._controller.action()
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         self._aliens.empty()
@@ -154,6 +154,7 @@ class GameManager:
             elif alien.rect.left <= 0:
                 self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
                 self.__alien_hit_border(ALIEN_Y_SPEED)
+
 
     def __alien_hit_border(self, y_distance):
         if self._aliens:
