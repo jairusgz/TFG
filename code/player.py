@@ -7,7 +7,7 @@ class Player(pg.sprite.Sprite):
 
     def __init__(self, start_pos, dimensions, player_speed, laser_speed, laser_dimensions, screen_dimensions):
         super().__init__()
-        self._image = pg.image.load('../Resources/player.png').convert_alpha()
+        self._image = pg.image.load('tfg/Resources/player.png').convert_alpha()
         self._image = pg.transform.scale(self._image, dimensions)
         self._rect = self._image.get_rect(midbottom=start_pos)
         self._dimensions = dimensions

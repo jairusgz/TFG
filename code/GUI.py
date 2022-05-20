@@ -10,7 +10,7 @@ from leaderboard_manager import LeaderboardManager
 
 class GameScreen:
     def __init__(self):
-        font = pg.font.Font('../Resources/NES_Font.otf', 20)
+        font = pg.font.Font('tfg/Resources/NES_Font.otf', 20)
         custom_theme = pygame_menu.themes.THEME_DARK.copy()
         custom_theme.title_font = font
         custom_theme.widget_font = font
@@ -21,7 +21,7 @@ class GameScreen:
         self._leaderboard_screen = False
 
         # Player image, displayed at the top right as the number of lives
-        self._lives_img = pg.image.load('../Resources/player.png').convert_alpha()
+        self._lives_img = pg.image.load('tfg/Resources/player.png').convert_alpha()
 
         # Game parameters
         self._player_name = 'Unnamed'
@@ -48,7 +48,6 @@ class GameScreen:
             self._ai_player = True
             self._player_name = 'AI'
             self.__run_game()
-            os.environ['SDL_VIDEODRIVER'] = 'dummy'
         else:
             self._menu.mainloop(self._surface)
 
@@ -68,7 +67,7 @@ class GameScreen:
 
     # Show the score on the top-left corner of the screen
     def __show_score(self):
-        score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render(
+        score_surf = pg.font.Font('tfg/Resources/NES_Font.otf', SCORE_FONT_SIZE).render(
                                   'SCORE: ' + str(self._game_manager.score), False, 'white')
 
         score_rect = score_surf.get_rect(topleft=[0, 0])
@@ -91,11 +90,11 @@ class GameScreen:
 
     # Show the final screen and wait for the user to press ESC to return to the menu
     def __show_final_screen(self):
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
+        final_surf = pg.font.Font('tfg/Resources/NES_Font.otf', GAME_OVER_FONT_SIZE).render('GAME OVER', False, 'red')
         final_rect = final_surf.get_rect(center=GAME_OVER_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
 
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
+        final_surf = pg.font.Font('tfg/Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
                                                                                         'white')
         final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
@@ -105,7 +104,7 @@ class GameScreen:
             self._game_manager.set_game_over()
 
     def __show_leaderboard(self):
-        leaderboard_title_surf = pg.font.Font('../Resources/NES_Font.otf', LEADERBOARD_TITLE_FONT_SIZE).render\
+        leaderboard_title_surf = pg.font.Font('tfg/Resources/NES_Font.otf', LEADERBOARD_TITLE_FONT_SIZE).render\
                                              ('Leaderboard', False, 'red')
         leaderboard_title_rect = leaderboard_title_surf.get_rect(center=LEADERBOARD_TITLE_CENTER_POS)
         self._surface.blit(leaderboard_title_surf, leaderboard_title_rect)
@@ -115,13 +114,13 @@ class GameScreen:
 
         for i, d in enumerate(leaderboard_data.iterrows()):
             data = f'{d[1][0]} {d[1][1]}'
-            surface = pg.font.Font('../Resources/NES_Font.otf', LEADERBOARD_FONT_SIZE).render(data, False, 'white')
+            surface = pg.font.Font('tfg/Resources/NES_Font.otf', LEADERBOARD_FONT_SIZE).render(data, False, 'white')
             rect = surface.get_rect(center=center_pos)
             center_pos = center_pos[0], center_pos[1] + 40
 
             self._surface.blit(surface, rect)
 
-        final_surf = pg.font.Font('../Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
+        final_surf = pg.font.Font('tfg/Resources/NES_Font.otf', RETURN_FONT_SIZE).render('Press Esc to return', False,
                                                                                         'white')
         final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
         self._surface.blit(final_surf, final_rect)

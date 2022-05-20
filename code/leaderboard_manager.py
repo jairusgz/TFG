@@ -2,7 +2,7 @@ import pandas as pd
 
 
 class LeaderboardManager:
-    _leaderboard_path = '../Data/high_scores.csv'
+    _leaderboard_path = 'tfg/Data/high_scores.csv'
 
     @classmethod
     def write_high_scores(cls, player_name, player_score):

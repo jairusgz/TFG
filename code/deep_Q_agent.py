@@ -1,13 +1,6 @@
 import os
 from game_parameters import *
 import time
-
-try:
-    os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
-    os.add_dll_directory(r"C:\Program Files\NVIDIA\CUDNN\v8.1\bin")
-except:
-    print('No se ha encontrado CUDA Toolkit o CUDNN')
-
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
@@ -22,8 +15,8 @@ class DeepQAgent:
         self._new_episode = True
         self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025)
         self._done = False
-        self._model_path = '../Data/model.h5'
-        self._optimizer_path = '../Data/optimizer_weights'
+        self._model_path = 'tfg/Data/model.h5'
+        self._optimizer_path = 'tfg/Data/optimizer_weights'
         self._action = 0
 
         # Experience replay buffers and training parameters
@@ -54,7 +47,7 @@ class DeepQAgent:
         self._model = self.__build_model()
         self._target_model = self.__build_model()
 
-        self._logfile = open('../Data/logfile.txt', 'w')
+        self._logfile = open('tfg/Data/logfile.txt', 'w')
         self._load_optimizer = False
         self._objective_reward = 2000
         self._max_training_frames = 10000000
@@ -194,7 +187,7 @@ class DeepQAgent:
     def __save_model(self):
         self._model.save(self._model_path)
         np.save(self._optimizer_path, self._optimizer.get_weights())
-        with open('../Data/training_status.csv', 'w') as f:
+        with open('tfg/Data/training_status.csv', 'w') as f:
             f.write('{}, {}, {}'.format(self._epsilon, self._episode_count, self._frame_count))
 
     def __write_history(self, history, path):
@@ -207,7 +200,7 @@ class DeepQAgent:
         self._target_model = tf.keras.models.load_model(self._model_path)
         self._target_model.set_weights(self._model.get_weights())
         self._load_optimizer = True
-        with open('../Data/training_status.csv') as f:
+        with open('tfg/Data/training_status.csv') as f:
             data = f.readlines()
             self._epsilon = float(data[0].split(',')[0])
             self._episode_count = int(data[0].split(',')[1])

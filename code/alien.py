@@ -31,21 +31,21 @@ class Alien(pg.sprite.Sprite):
 
 class Alien_red(Alien):
     def __init__(self, dimensions, initial_pos):
-        img_path = os.path.join('../Resources', 'red.png')
+        img_path = os.path.join('tfg/Resources', 'red.png')
         super().__init__(dimensions, initial_pos, img_path)
         self._value = 10
 
 
 class Alien_green(Alien):
     def __init__(self, dimensions, initial_pos):
-        img_path = os.path.join('../Resources', 'green.png')
+        img_path = os.path.join('tfg/Resources', 'green.png')
         super().__init__(dimensions, initial_pos, img_path)
         self._value = 20
 
 
 class Alien_yellow(Alien):
     def __init__(self, dimensions, initial_pos):
-        img_path = os.path.join('../Resources', 'yellow.png')
+        img_path = os.path.join('tfg/Resources', 'yellow.png')
         super().__init__(dimensions, initial_pos, img_path)
         self._value = 30
 
@@ -54,7 +54,7 @@ class Mothership(pg.sprite.Sprite):
     def __init__(self, y, dimensions, side, speed, screen_size):
         super().__init__()
 
-        self._image = pg.image.load('../Resources/extra.png').convert_alpha()
+        self._image = pg.image.load('tfg/Resources/extra.png').convert_alpha()
         self._image = pg.transform.scale(self._image, dimensions)
 
         if side == 'right':
