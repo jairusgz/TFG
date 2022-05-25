@@ -1,7 +1,7 @@
 from enum import Enum
 
 DEBUG = False
-LOG_EVERY = 1000
+LOG_EVERY = 10000
 
 # AI training
 TRAINING_MODE = True

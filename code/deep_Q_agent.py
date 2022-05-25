@@ -1,4 +1,4 @@
-import os
+import csv
 from game_parameters import *
 import time
 import logging
@@ -18,7 +18,7 @@ class DeepQAgent:
         self._state_size = state_size
         self._action_size = action_size
         self._new_episode = True
-        self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025)
+        self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025, momentum=0.95)
         self._done = False
         self._model_path = '../Data/model.h5'
         self._optimizer_path = '../Data/optimizer_weights'
@@ -47,14 +47,14 @@ class DeepQAgent:
         self._epsilon = 1.0  # Epsilon-greedy parameter
         self._epsilon_min = 0.1
         self._epsilon_decay = 0.995
-        self._learning_rate = 0.0002
         self._batch_size = 32
         self._model = self.__build_model()
         self._target_model = self.__build_model()
 
-        self._logfile = open('../Data/logfile.txt', 'w')
+        self._result_history = {'episode_reward': [], 'frame_count': [], 'mean_Q_action_value': []}
+        self._q_action_value_history = []
         self._load_optimizer = False
-        self._objective_reward = 2000
+        self._objective_reward = 1000
         self._max_training_frames = 10000000
 
         if load_model or not TRAINING_MODE:
@@ -65,9 +65,9 @@ class DeepQAgent:
         inputs = layers.Input(shape=self._state_size)
 
         # 3 convolutional layers
-        layer1 = layers.Conv2D(32, 8, strides=4, activation='relu')(inputs)
-        layer2 = layers.Conv2D(64, 4, strides=2, activation='relu')(layer1)
-        layer3 = layers.Conv2D(64, 3, strides=1, activation='relu')(layer2)
+        layer1 = layers.Conv2D(32, (8, 8), strides=4, activation='relu')(inputs)
+        layer2 = layers.Conv2D(64, (4, 4), strides=2, activation='relu')(layer1)
+        layer3 = layers.Conv2D(64, (3, 3), strides=1, activation='relu')(layer2)
 
         # Flatten the output of the convolutional layers
         flatten = layers.Flatten()(layer3)
@@ -134,7 +134,6 @@ class DeepQAgent:
                 updated_q_values = rewards_sample + self._gamma * tf.reduce_max(
                     future_rewards, axis=1
                 )
-
                 # If final frame set the last value to -1
                 updated_q_values = updated_q_values * (1 - done_sample) - done_sample
 
@@ -149,6 +148,7 @@ class DeepQAgent:
 
                     # Apply the masks to the Q-values to get the Q-value for action taken
                     q_action = tf.reduce_sum(tf.multiply(q_values, masks), axis=1)
+                    self._q_action_value_history.append(tf.get_static_value(tf.reduce_mean(q_action)))
 
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
@@ -183,8 +183,6 @@ class DeepQAgent:
 
             if self._running_reward > self._objective_reward or self._frame_count >= 1000000:
                 print("Solved at episode {}!".format(self._episode_count))
-                self._logfile.write("Solved at episode {}!".format(self._episode_count))
-                self._logfile.close()
                 self.__save_model()
                 self._done = True
 
@@ -208,6 +206,9 @@ class DeepQAgent:
             for item in history:
                 file.write("{}\n".format(item))
 
+    def write_history_results(self):
+        pass
+
     def __load_model(self):
         self._model = tf.keras.models.load_model(self._model_path)
         self._target_model = tf.keras.models.load_model(self._model_path)
@@ -227,18 +228,19 @@ class DeepQAgent:
             del self._episode_reward_history[:1]
         self._running_reward = np.mean(self._episode_reward_history)
 
+        with open('../log/episode_log.csv', 'wb') as f:
+            datareader = csv.writer(f)
+            datareader.writerow([self._episode_reward, self._episode_frames, np.mean(self._q_action_value_history)])
+
         print(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
               f'running reward: {self._running_reward}, frames: '
               f'{self._episode_frames}, total frames: {self._frame_count}')
 
-        self._logfile.write(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
-                            f'running reward: {self._running_reward}, frames: '
-                            f'{self._episode_frames}, total frames: {self._frame_count}\n')
-        self._logfile.flush()
         self._episode_count += 1
         self._new_episode = False
         self._episode_frames = 0
         self._episode_reward = 0
+        self._q_action_value_history.clear()
 
     @property
     def done(self):
