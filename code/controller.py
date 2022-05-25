@@ -1,7 +1,9 @@
+import logging
 import numpy as np
 from player import *
 from deep_Q_agent import DeepQAgent
 import tensorflow as tf
+import time
 
 
 class Controller:
@@ -41,6 +43,9 @@ class Controller_AI(Controller):
                                 3: lambda: self._player.shoot_laser(),
                                 4: lambda: self._player.move(-1) and self._player.shoot_laser(),
                                 5: lambda: self._player.move(1) and self._player.shoot_laser()}
+        self._train_time = []
+        self._update_time = []
+        self._preprocess_time = []
 
     def stack_frame(self, frame, score):
         """
@@ -70,17 +75,36 @@ class Controller_AI(Controller):
 
             if len(self._frame_memory) == 5:
                 reward = self._score_memory[-1] - self._score_memory[-2]
+                start = time.time()
                 self._model.train(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
+                end = time.time()
+                self._train_time.append(end - start)
 
                 state = tf.convert_to_tensor(np.array(self._frame_memory[:-1]).transpose(2, 1, 0))
                 next_state = tf.convert_to_tensor(np.array(self._frame_memory[1:]).transpose(2, 1, 0))
                 action = self._action_memory[0]
 
+                start = time.time()
                 self._model.update(state, action, reward, next_state)
+                end = time.time()
+                self._update_time.append(end - start)
 
         self._frame_count += 1
+        if self._frame_count % LOG_EVERY == 0:
+            mean_train_time = np.mean(self._train_time)
+            mean_update_time = np.mean(self._update_time)
+            mean_preprocess_time = np.mean(self._preprocess_time)
+            self._train_time = []
+            self._update_time = []
+            self._preprocess_time = []
+
+            logging.info(f"Mean train time: {round(mean_train_time, 4)}")
+            logging.info(f"Mean update time: {round(mean_update_time, 4)}")
+            logging.info(f"Mean preprocess time: {round(mean_preprocess_time, 4)}\n")
 
     def __process_frame(self, state):
+        start = time.time()
+
         arr = np.array(state)
         # First, we crop the image to remove the top and bottom of the screen, leaving a 480x480 image.
         arr = arr[:480, 81:561].copy(order='C')
@@ -96,6 +120,8 @@ class Controller_AI(Controller):
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
         gray_scale_arr = 0.2989 * r + 0.5870 * g + 0.1140 * b
 
+        end = time.time()
+        self._preprocess_time.append(end - start)
         return gray_scale_arr
 
     def action(self):

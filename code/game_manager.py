@@ -1,4 +1,6 @@
 import pygame.sprite
+
+from obstacle import Block
 from controller import *
 from laser import Laser
 from game_parameters import *
@@ -47,11 +49,30 @@ class GameManager:
         self._mothership_count = 0
         self._mothership_score = 70
 
+        # Obstacles
+        self._blocks = pg.sprite.Group()
+
         # Life system
         self._lives = None
 
         # Score system
         self._score = 0
+
+        # Audio
+        self._music = pg.mixer.Sound('../Resources/space_invaders_theme.wav')
+        self._music.set_volume(1)
+
+        self._shoot_sound = pg.mixer.Sound('../Resources/shoot.wav')
+        self._shoot_sound.set_volume(0.1)
+
+        self._explosion_sound = pg.mixer.Sound('../Resources/explosion.wav')
+        self._explosion_sound.set_volume(0.1)
+
+        self._alien_hit_sound = pg.mixer.Sound('../Resources/invaderkilled.wav')
+        self._alien_hit_sound.set_volume(0.1)
+
+        self._mothership_sound = pg.mixer.Sound('../Resources/ufo_lowpitch.wav')
+        self._mothership_sound.set_volume(0.1)
 
     def setup(self, ai_player, player_name='AI', controller=None):
 
@@ -86,6 +107,9 @@ class GameManager:
         # Mothership
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
 
+        # Obstacles
+        self.__obstacle_setup()
+
         # Life system
         self._lives = NUM_LIVES
 
@@ -95,6 +119,9 @@ class GameManager:
         # Score system
         self._score = 0
 
+        # Audio
+        self._music.play(-1)
+
     def __next_level(self):
         # Advance to next level and adjust speed modifier
         self._level += 1
@@ -103,6 +130,7 @@ class GameManager:
         # Reset the aliens and the mothership timer and value
         self.__alien_setup(ALIEN_NUMBER_ROWS, ALIEN_NUMBER_COLUMNS, ALIEN_START_POS, ALIEN_X_SPACING,
                            ALIEN_Y_SPACING)
+        self.__obstacle_setup()
         self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
         self._mothership_count = 0
         self._mothership_score = 70
@@ -126,6 +154,22 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
+
+    def __create_obstacle(self, x_start, y_start):
+        for row_idx, row in enumerate(OBSTACLE_SHAPE):
+            for col_idx, col in enumerate(row):
+                if col == 'x':
+                    x = x_start + col_idx * BLOCK_SIZE
+                    y = y_start + row_idx * BLOCK_SIZE
+                    block = Block(BLOCK_SIZE, BLOCK_COLOR, x, y)
+                    self._blocks.add(block)
+
+    def __obstacle_setup(self):
+        self._blocks.empty()
+        x_start = OBSTACLE_X_START
+        for i in range(NUM_OBSTACLES):
+            self.__create_obstacle(x_start, OBSTACLE_Y_START)
+            x_start += OBSTACLE_LENGTH + OBSTACLE_SPACE
 
     def __alien_setup(self, rows, columns, start_pos, x_spacing, y_spacing):
         self._aliens.empty()
@@ -155,7 +199,6 @@ class GameManager:
                 self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
                 self.__alien_hit_border(ALIEN_Y_SPEED)
 
-
     def __alien_hit_border(self, y_distance):
         if self._aliens:
             for alien in self._aliens.sprites():
@@ -169,6 +212,7 @@ class GameManager:
                 self._alien_lasers.add(laser)
                 self._shoot_timer = randint(MIN_LASER_CD, MAX_LASER_CD)
                 self._shoot_count = 0
+                self._shoot_sound.play()
 
             else:
                 self._shoot_count += 1
@@ -182,6 +226,7 @@ class GameManager:
                                MOTHERSHIP_SPEED, SCREEN_RES))
                 self._mothership_count = 0
                 self._mothership_cd = randint(MOTHERSHIP_MIN_CD, MOTHERSHIP_MAX_CD)
+                self._mothership_sound.play()
             else:
                 self._mothership_count += 1
 
@@ -192,9 +237,10 @@ class GameManager:
             for laser in self._player.sprite.lasers:
 
                 # Collision with aliens
-                alien_collisions = pg.sprite.spritecollide(laser, self._aliens, dokill=True)
+                alien_collisions = pg.sprite.spritecollide(laser, self._aliens, dokill=False)
                 if alien_collisions:
                     self._score += alien_collisions[0].value
+                    alien_collisions[0].kill()
                     laser.kill()
                     self._speed_modifier *= SPEED_INCREMENT
                     if self._alien_direction < 0:
@@ -202,6 +248,7 @@ class GameManager:
                     else:
                         self._alien_direction = ALIEN_X_SPEED * self._speed_modifier
 
+                    self._alien_hit_sound.play()
                     # Advance to next level if all the aliens are killed
                     if not self._aliens:
                         self.__next_level()
@@ -210,20 +257,29 @@ class GameManager:
                 if pg.sprite.spritecollide(laser, self._mothership, dokill=True):
                     laser.kill()
                     self._score += self.__calculate_mothership_value()
+                    self._explosion_sound.play()
 
-                # TODO Colisiones con los obstaculos
+                # Collision with Obstacles
+                if pg.sprite.spritecollide(laser, self._blocks, dokill=True):
+                    laser.kill()
 
         # Alien lasers
         if self._alien_lasers:
             for laser in self._alien_lasers:
+
+                # Collision with player
                 if pg.sprite.spritecollide(laser, self._player, dokill=False):
                     laser.kill()
                     if self._lives > 1:
                         self._lives -= 1
+                        self._explosion_sound.play()
                     else:
                         self.__final_screen()
+                        self._explosion_sound.play()
 
-                # TODO Colision con los obstaculos
+                # Collision with obstacles
+                if pg.sprite.spritecollide(laser, self._blocks, dokill=True):
+                    laser.kill()
 
                 '''
                 Collision between lasers:
@@ -237,11 +293,17 @@ class GameManager:
 
         if self._aliens:
             for alien in self._aliens:
+
+                # Collision with bottom of the screen
                 if alien.rect.bottom >= ALIEN_MAX_Y:
                     if self._ai_player and TRAINING_MODE:
                         self.__final_screen()
                     else:
                         self._game_status = Game_status.FINAL_SCREEN
+
+                # Collision with obstacles
+                pg.sprite.spritecollide(alien, self._blocks, dokill=True)
+
 
     def __calculate_mothership_value(self):
         """
@@ -261,6 +323,7 @@ class GameManager:
         else:
             self.__write_high_scores()
             self._game_status = Game_status.FINAL_SCREEN
+            self._music.stop()
 
     def __write_high_scores(self):
         LeaderboardManager.write_high_scores(self._player_name, self._score)
@@ -292,6 +355,10 @@ class GameManager:
     @property
     def alien_lasers(self):
         return self._alien_lasers
+
+    @property
+    def obstacles(self):
+        return self._blocks
 
     def set_game_over(self):
         self._game_status = Game_status.GAME_OVER

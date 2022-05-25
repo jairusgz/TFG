@@ -1,13 +1,7 @@
 import os
 from game_parameters import *
 import time
-
-try:
-    os.add_dll_directory("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/bin")
-    os.add_dll_directory(r"C:\Program Files\NVIDIA\CUDNN\v8.1\bin")
-except:
-    print('No se ha encontrado CUDA Toolkit o CUDNN')
-
+import logging
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
@@ -16,6 +10,10 @@ import numpy as np
 
 class DeepQAgent:
     def __init__(self, state_size, action_size, load_model=False):
+        # Logging parameters
+        self._backpropagation_time = []
+        self._loss_time = []
+
         self._episode_reward = 0
         self._state_size = state_size
         self._action_size = action_size
@@ -39,7 +37,7 @@ class DeepQAgent:
         self._episode_frames = 0
         self._epsilon_random_frames = 50000
         self._epsilon_greedy_frames = 1000000.0
-        self._max_memory_length = 1000000
+        self._max_memory_length = 50000
         self._update_after_actions = 4
         self._update_target_network = 10000
         self._loss_function = keras.losses.Huber()
@@ -143,6 +141,7 @@ class DeepQAgent:
                 # Create a mask so we only calculate loss on the updated Q-values
                 masks = tf.one_hot(action_sample, self._action_size)
                 start = time.time()
+
                 with tf.GradientTape() as tape:
 
                     # Train the model on the states and updated Q-values
@@ -153,20 +152,21 @@ class DeepQAgent:
 
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
+
                 end = time.time()
-                if DEBUG:
-                    print(f"Loss took {end - start} seconds")
+                self._loss_time.append(end-start)
 
                 # Backpropagation
                 start = time.time()
+
                 grads = tape.gradient(loss, self._model.trainable_variables)
                 self._optimizer.apply_gradients(zip(grads, self._model.trainable_variables))
                 if self._load_optimizer:
                     self._optimizer.set_weights(np.load(self._optimizer_path + '.npy', allow_pickle=True))
                     self._load_optimizer = False
+
                 end = time.time()
-                if DEBUG:
-                    print(f'Backpropagation took {end - start} seconds')
+                self._backpropagation_time.append(end - start)
 
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
@@ -187,6 +187,15 @@ class DeepQAgent:
                 self._logfile.close()
                 self.__save_model()
                 self._done = True
+
+            if self._frame_count % LOG_EVERY == 0:
+                mean_loss_time = round(np.mean(self._loss_time), 4)
+                mean_backpropagation_time = round(np.mean(self._backpropagation_time), 4)
+                self._loss_time.clear()
+                self._backpropagation_time.clear()
+
+                logging.debug(f'Mean loss time: {mean_loss_time}')
+                logging.debug(f'Mean backpropagation time: {mean_backpropagation_time}\n')
 
     def __save_model(self):
         self._model.save(self._model_path)

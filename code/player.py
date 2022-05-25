@@ -23,6 +23,9 @@ class Player(pg.sprite.Sprite):
         self._laser_speed = laser_speed
         self._laser_dimensions = laser_dimensions
 
+        self._shoot_sound = pg.mixer.Sound('../Resources/shoot.wav')
+        self._shoot_sound.set_volume(0.1)
+
     def move(self, dir):
         if self._rect.x + self._dimensions[0] + dir * self._speed < self._max_x and \
                 self._rect.x + dir * self._speed > 0:
@@ -39,6 +42,7 @@ class Player(pg.sprite.Sprite):
             self._laser_ready = False
             self._laser_time = pg.time.get_ticks()
             self._laser_count += 1
+            self._shoot_sound.play()
 
     def __laser_reload(self):
         if not self._laser_ready:

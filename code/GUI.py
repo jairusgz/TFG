@@ -1,3 +1,5 @@
+import random
+
 from game_parameters import *
 import pygame as pg
 import pygame_menu
@@ -6,6 +8,7 @@ if TRAINING_MODE:
     os.environ["SDL_VIDEODRIVER"] = "dummy"
 from game_manager import GameManager
 from leaderboard_manager import LeaderboardManager
+import logging
 
 
 class GameScreen:
@@ -19,6 +22,7 @@ class GameScreen:
         self._surface = pg.display.set_mode(MENU_SCREEN_SIZE)
         self._game_manager = GameManager()
         self._leaderboard_screen = False
+        self._tv = RetroTv(self._surface)
 
         # Player image, displayed at the top right as the number of lives
         self._lives_img = pg.image.load('../Resources/player.png').convert_alpha()
@@ -48,12 +52,11 @@ class GameScreen:
             self._ai_player = True
             self._player_name = 'AI'
             self.__run_game()
-            os.environ['SDL_VIDEODRIVER'] = 'dummy'
         else:
             self._menu.mainloop(self._surface)
 
     # Change player type, called from the selector widget when the value is changed
-    def __change_player(self, values, selected_value):
+    def __change_player(self, _, selected_value):
         self._ai_player = selected_value
 
     # Change player name, called from the text input of the menu
@@ -69,7 +72,7 @@ class GameScreen:
     # Show the score on the top-left corner of the screen
     def __show_score(self):
         score_surf = pg.font.Font('../Resources/NES_Font.otf', SCORE_FONT_SIZE).render(
-                                  'SCORE: ' + str(self._game_manager.score), False, 'white')
+            'SCORE: ' + str(self._game_manager.score), False, 'white')
 
         score_rect = score_surf.get_rect(topleft=[0, 0])
         self._surface.blit(score_surf, score_rect)
@@ -88,6 +91,7 @@ class GameScreen:
         self._game_manager.mothership.draw(self._surface)
         self._game_manager.player.sprite.lasers.draw(self._surface)
         self._game_manager.player.draw(self._surface)
+        self._game_manager.obstacles.draw(self._surface)
 
     # Show the final screen and wait for the user to press ESC to return to the menu
     def __show_final_screen(self):
@@ -99,14 +103,15 @@ class GameScreen:
                                                                                         'white')
         final_rect = final_surf.get_rect(center=RETURN_CENTER_POS)
         self._surface.blit(final_surf, final_rect)
+        self._tv.draw()
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
             self._game_manager.set_game_over()
 
     def __show_leaderboard(self):
-        leaderboard_title_surf = pg.font.Font('../Resources/NES_Font.otf', LEADERBOARD_TITLE_FONT_SIZE).render\
-                                             ('Leaderboard', False, 'red')
+        leaderboard_title_surf = pg.font.Font('../Resources/NES_Font.otf', LEADERBOARD_TITLE_FONT_SIZE).render \
+            ('Leaderboard', False, 'red')
         leaderboard_title_rect = leaderboard_title_surf.get_rect(center=LEADERBOARD_TITLE_CENTER_POS)
         self._surface.blit(leaderboard_title_surf, leaderboard_title_rect)
 
@@ -142,6 +147,7 @@ class GameScreen:
 
             self._surface.fill([30, 30, 30])
             self.__show_leaderboard()
+            self._tv.draw()
             pg.display.flip()
             clock.tick(FPS)
 
@@ -170,6 +176,8 @@ class GameScreen:
                 self.__show_final_screen()
             else:
                 self._surface.fill([87, 72, 0], rect=(PLANET_X, PLANET_Y, PLANET_WIDTH, PLANET_HEIGHT))
+                if not self._ai_player:
+                    self._tv.draw()
                 self._game_manager.run(self._surface)
                 self.__draw_sprites()
                 self.__show_lives()
@@ -180,7 +188,27 @@ class GameScreen:
         pg.display.set_mode(MENU_SCREEN_SIZE)
 
 
+class RetroTv:
+    def __init__(self, surface):
+        self._tv = pg.transform.scale(pg.image.load('../Resources/tv.png').convert_alpha(),
+                                      (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self._surface = surface
+
+    def _tv_lines(self):
+        for l in range(NUM_TV_LINES):
+            y = l * TV_LINE_HEIGHT
+            pg.draw.line(self._tv, 'black', (0, y), (SCREEN_WIDTH, y), 1)
+
+    def draw(self):
+        self._tv.set_alpha(random.randint(70, 90))
+        self._tv_lines()
+        self._surface.blit(self._tv, (0, 0))
+
+
 if __name__ == '__main__':
+    logging.basicConfig(filename='../log/logging.log', format='%(asctime)s %(levelname)s %(message)s',
+                        level=logging.DEBUG, datefmt='%I:%M:%S')
+    logging.info('Inicializando aplicacion')
     pg.init()
     pg.display.set_caption('Space Invaders')
     gui = GameScreen()
