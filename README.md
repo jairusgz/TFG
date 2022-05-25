@@ -7,7 +7,7 @@
 
 ## Dependencias y módulos necesarios
 
-- Python3
+- Python3.7 o superior
 - pygame 
 - pygame-menu
 - pandas
