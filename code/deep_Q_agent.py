@@ -33,11 +33,11 @@ class DeepQAgent:
         self._episode_reward_history = []
         self._running_reward = 0
         self._episode_count = 0
-        self._frame_count = 0
-        self._episode_frames = 0
-        self._epsilon_random_frames = 50000
-        self._epsilon_greedy_frames = 1000000.0
-        self._max_memory_length = 50000
+        self._frame_count = 1
+        self._episode_frames = 1
+        self._epsilon_random_frames = 12000
+        self._epsilon_greedy_frames = 520000.0
+        self._max_memory_length = 12000
         self._update_after_actions = 4
         self._update_target_network = 10000
         self._loss_function = keras.losses.Huber()
@@ -54,7 +54,7 @@ class DeepQAgent:
         self._result_history = {'episode_reward': [], 'frame_count': [], 'mean_Q_action_value': []}
         self._q_action_value_history = []
         self._load_optimizer = False
-        self._objective_reward = 1000
+        self._objective_reward = 850
         self._max_training_frames = 10000000
 
         if load_model or not TRAINING_MODE:
@@ -103,8 +103,8 @@ class DeepQAgent:
 
     def update(self, state, action, reward, next_state):
         if not self._done:
-            self._frame_count += 4
-            self._episode_frames += 4
+            self._frame_count += 1
+            self._episode_frames += 1
             self._episode_reward += reward
 
             # Save actions and states in replay buffer
@@ -114,7 +114,7 @@ class DeepQAgent:
             self._done_history.append(self._done)
             self._rewards_history.append(reward)
 
-            if self._frame_count % self._update_after_actions == 0 and len(self._done_history) > self._batch_size:
+            if len(self._done_history) > self._batch_size:
                 # Get indices of samples for replay buffers
                 indices = np.random.choice(range(len(self._done_history)), size=self._batch_size)
 
@@ -144,7 +144,7 @@ class DeepQAgent:
                 with tf.GradientTape() as tape:
 
                     # Train the model on the states and updated Q-values
-                    q_values = self._model(state_sample.astype(np.float32))
+                    q_values = self._model(state_sample.astype(np.float16))
 
                     # Apply the masks to the Q-values to get the Q-value for action taken
                     q_action = tf.reduce_sum(tf.multiply(q_values, masks), axis=1)
@@ -181,10 +181,11 @@ class DeepQAgent:
                 del self._action_history[:1]
                 del self._done_history[:1]
 
-            if self._running_reward > self._objective_reward or self._frame_count >= 1000000:
-                print("Solved at episode {}!".format(self._episode_count))
+            if self._running_reward > self._objective_reward or self._frame_count >= self._max_training_frames:
+                logging.info("Solved at episode {}!".format(self._episode_count))
                 self.__save_model()
                 self._done = True
+                exit()
 
             if self._frame_count % LOG_EVERY == 0:
                 mean_loss_time = round(np.mean(self._loss_time), 4)
@@ -228,8 +229,8 @@ class DeepQAgent:
             del self._episode_reward_history[:1]
         self._running_reward = np.mean(self._episode_reward_history)
 
-        with open('../log/episode_log.csv', 'wb') as f:
-            datareader = csv.writer(f)
+        with open('../log/episode_log.csv', 'a') as f:
+            datareader = csv.writer(f, lineterminator='\n\r')
             datareader.writerow([self._episode_reward, self._episode_frames, np.mean(self._q_action_value_history)])
 
         print(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
