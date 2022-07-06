@@ -201,3 +201,206 @@
 03:02:20 INFO Inicializando aplicacion
 03:06:12 DEBUG Creating converter from 3 to 5
 03:06:12 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:50:25 INFO Inicializando aplicacion
+03:50:32 DEBUG Creating converter from 3 to 5
+03:50:32 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:52:56 INFO Inicializando aplicacion
+03:53:10 INFO Inicializando aplicacion
+03:53:13 DEBUG Creating converter from 3 to 5
+03:53:13 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:53:23 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:53:42 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:54:59 INFO Inicializando aplicacion
+03:55:22 INFO Inicializando aplicacion
+03:55:46 INFO Inicializando aplicacion
+03:56:28 INFO Inicializando aplicacion
+03:56:30 DEBUG Creating converter from 3 to 5
+03:56:30 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:57:28 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:58:27 INFO Inicializando aplicacion
+03:58:43 INFO Inicializando aplicacion
+03:59:04 INFO Inicializando aplicacion
+03:59:06 DEBUG Creating converter from 3 to 5
+03:59:06 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:04:05 INFO Inicializando aplicacion
+04:04:07 DEBUG Creating converter from 3 to 5
+04:04:07 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:05:34 INFO Inicializando aplicacion
+04:06:50 INFO Inicializando aplicacion
+04:07:14 DEBUG Creating converter from 3 to 5
+04:07:14 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:08:17 INFO Inicializando aplicacion
+04:08:20 DEBUG Creating converter from 3 to 5
+04:08:20 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:12:46 INFO Inicializando aplicacion
+04:16:51 INFO Inicializando aplicacion
+04:16:54 DEBUG Creating converter from 3 to 5
+04:16:54 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:17:35 INFO Inicializando aplicacion
+04:17:38 DEBUG Creating converter from 3 to 5
+04:17:38 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:24:14 INFO Inicializando aplicacion
+04:24:16 DEBUG Creating converter from 3 to 5
+04:24:16 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:24:34 INFO Inicializando aplicacion
+04:24:36 DEBUG Creating converter from 3 to 5
+04:24:36 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:27:30 INFO Inicializando aplicacion
+04:27:33 DEBUG Creating converter from 3 to 5
+04:27:33 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:28:25 INFO Inicializando aplicacion
+04:28:27 DEBUG Creating converter from 3 to 5
+04:28:27 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:29:04 INFO Inicializando aplicacion
+04:29:07 DEBUG Creating converter from 3 to 5
+04:29:07 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:31:04 INFO Inicializando aplicacion
+04:31:06 DEBUG Creating converter from 3 to 5
+04:31:06 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:35:25 INFO Inicializando aplicacion
+04:35:29 DEBUG Creating converter from 3 to 5
+04:35:29 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:35:29 WARNING 5 out of the last 5 calls to <function Model.make_predict_function.<locals>.predict_function at 0x0000026AA35238B0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:35:30 WARNING 6 out of the last 6 calls to <function Model.make_predict_function.<locals>.predict_function at 0x0000026AA3578310> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:36:02 INFO Inicializando aplicacion
+04:36:06 DEBUG Creating converter from 3 to 5
+04:36:06 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:36:07 WARNING 5 out of the last 5 calls to <function Model.make_predict_function.<locals>.predict_function at 0x00000219632E38B0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:36:07 WARNING 6 out of the last 6 calls to <function Model.make_predict_function.<locals>.predict_function at 0x0000021963339310> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:36:17 INFO Inicializando aplicacion
+04:36:19 DEBUG Creating converter from 3 to 5
+04:36:19 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:36:20 WARNING 5 out of the last 5 calls to <function Model.make_predict_function.<locals>.predict_function at 0x000001C1E5F608B0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:36:20 WARNING 6 out of the last 6 calls to <function Model.make_predict_function.<locals>.predict_function at 0x000001C1E5FB8310> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+04:37:16 INFO Inicializando aplicacion
+04:37:19 DEBUG Creating converter from 3 to 5
+04:37:19 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:38:26 INFO Inicializando aplicacion
+04:38:34 INFO Inicializando aplicacion
+04:38:36 DEBUG Creating converter from 3 to 5
+04:38:36 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:39:14 INFO Inicializando aplicacion
+04:39:16 DEBUG Creating converter from 3 to 5
+04:39:16 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:39:23 INFO Inicializando aplicacion
+04:39:25 DEBUG Creating converter from 3 to 5
+04:39:25 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:39:49 INFO Inicializando aplicacion
+04:39:52 DEBUG Creating converter from 3 to 5
+04:39:52 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:40:12 INFO Inicializando aplicacion
+04:40:14 DEBUG Creating converter from 3 to 5
+04:40:14 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:40:27 INFO Inicializando aplicacion
+04:40:29 DEBUG Creating converter from 3 to 5
+04:40:29 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:41:23 INFO Inicializando aplicacion
+04:41:32 INFO Inicializando aplicacion
+04:41:34 DEBUG Creating converter from 3 to 5
+04:41:34 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:41:46 INFO Inicializando aplicacion
+04:41:49 DEBUG Creating converter from 3 to 5
+04:41:49 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:42:16 INFO Inicializando aplicacion
+04:42:18 DEBUG Creating converter from 3 to 5
+04:42:18 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:42:43 INFO Inicializando aplicacion
+04:52:33 INFO Inicializando aplicacion
+04:52:36 DEBUG Creating converter from 3 to 5
+04:52:36 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:52:47 INFO Inicializando aplicacion
+04:52:49 DEBUG Creating converter from 3 to 5
+04:52:49 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:53:09 INFO Inicializando aplicacion
+04:53:11 DEBUG Creating converter from 3 to 5
+04:53:12 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:53:28 INFO Inicializando aplicacion
+04:53:30 DEBUG Creating converter from 3 to 5
+04:53:30 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:54:09 INFO Inicializando aplicacion
+04:54:11 DEBUG Creating converter from 3 to 5
+04:54:11 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:55:48 INFO Inicializando aplicacion
+04:55:50 DEBUG Creating converter from 3 to 5
+04:55:50 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:58:45 INFO Inicializando aplicacion
+04:58:48 DEBUG Creating converter from 3 to 5
+04:58:48 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:59:07 INFO Inicializando aplicacion
+04:59:09 DEBUG Creating converter from 3 to 5
+04:59:09 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:59:27 INFO Inicializando aplicacion
+04:59:30 DEBUG Creating converter from 3 to 5
+04:59:30 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:59:43 INFO Inicializando aplicacion
+04:59:46 DEBUG Creating converter from 3 to 5
+04:59:46 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+04:59:59 INFO Inicializando aplicacion
+05:00:01 DEBUG Creating converter from 3 to 5
+05:00:01 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:00:12 INFO Inicializando aplicacion
+05:00:14 DEBUG Creating converter from 3 to 5
+05:00:14 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:00:38 INFO Inicializando aplicacion
+05:00:40 DEBUG Creating converter from 3 to 5
+05:00:40 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:01:43 INFO Inicializando aplicacion
+05:01:45 DEBUG Creating converter from 3 to 5
+05:01:45 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:02:03 INFO Inicializando aplicacion
+05:02:06 DEBUG Creating converter from 3 to 5
+05:02:06 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:02:19 INFO Inicializando aplicacion
+05:02:23 DEBUG Creating converter from 3 to 5
+05:02:23 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:02:50 INFO Inicializando aplicacion
+05:02:52 DEBUG Creating converter from 3 to 5
+05:02:52 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:03:03 INFO Inicializando aplicacion
+05:03:05 DEBUG Creating converter from 3 to 5
+05:03:05 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:03:15 INFO Inicializando aplicacion
+05:03:17 DEBUG Creating converter from 3 to 5
+05:03:17 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:03:25 INFO Inicializando aplicacion
+05:03:27 DEBUG Creating converter from 3 to 5
+05:03:27 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:03:59 INFO Inicializando aplicacion
+05:04:01 DEBUG Creating converter from 3 to 5
+05:04:01 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:04:14 INFO Inicializando aplicacion
+05:04:17 DEBUG Creating converter from 3 to 5
+05:04:18 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:04:27 INFO Inicializando aplicacion
+05:04:29 DEBUG Creating converter from 3 to 5
+05:04:29 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:04:44 INFO Inicializando aplicacion
+05:04:46 DEBUG Creating converter from 3 to 5
+05:04:46 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+05:05:04 INFO Inicializando aplicacion
+05:05:06 DEBUG Creating converter from 3 to 5
+05:05:06 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:28:42 INFO Inicializando aplicacion
+06:28:45 DEBUG Creating converter from 3 to 5
+06:28:45 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:35:04 INFO Inicializando aplicacion
+06:35:18 INFO Inicializando aplicacion
+06:35:20 DEBUG Creating converter from 3 to 5
+06:35:20 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:35:54 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:36:30 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:37:04 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:37:38 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:38:04 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:40:29 INFO Inicializando aplicacion
+06:40:31 DEBUG Creating converter from 3 to 5
+06:40:31 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:44:45 INFO Inicializando aplicacion
+06:44:47 DEBUG Creating converter from 3 to 5
+06:44:47 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:45:21 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+06:46:50 INFO Inicializando aplicacion
+06:46:52 DEBUG Creating converter from 3 to 5
+06:46:52 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+07:33:54 INFO Inicializando aplicacion
+07:34:12 INFO Inicializando aplicacion

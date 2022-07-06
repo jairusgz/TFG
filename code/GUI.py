@@ -7,7 +7,6 @@ import os
 if TRAINING_MODE:
     os.environ["SDL_VIDEODRIVER"] = "dummy"
 from game_manager import GameManager
-from leaderboard_manager import LeaderboardManager
 import logging
 
 
@@ -65,7 +64,6 @@ class GameScreen:
 
     # Setup the game manager and import the constants for the player or the AI
     def __setup_game(self):
-
         self._game_manager.setup(self._ai_player, self._player_name)
         self._lives_img = pg.transform.scale(self._lives_img, LIVES_IMG_DIMENSIONS)
 
@@ -115,7 +113,7 @@ class GameScreen:
         leaderboard_title_rect = leaderboard_title_surf.get_rect(center=LEADERBOARD_TITLE_CENTER_POS)
         self._surface.blit(leaderboard_title_surf, leaderboard_title_rect)
 
-        leaderboard_data = LeaderboardManager.read_high_scores()
+        leaderboard_data = self._game_manager.read_high_scores()
         center_pos = LEADERBOARD_CENTER_POS[0], LEADERBOARD_CENTER_POS[1] - 40
 
         for i, d in enumerate(leaderboard_data.iterrows()):

@@ -1,10 +1,12 @@
+import PIL.Image
+import keras.backend
 import numpy as np
 from player import *
 from deep_Q_agent import DeepQAgent
 import tensorflow as tf
 from tensorflow import keras
 from PIL import Image
-
+from keras import models
 
 class Controller:
     def __init__(self, player):
@@ -62,9 +64,10 @@ class Controller_AI(Controller):
         self._frame_count += 1
 
     def __process_frame(self, state):
-        arr = np.array(state)
+        arr = np.array(state).astype(np.uint8)
+
         # First, we crop the image to remove the top and bottom of the screen, leaving a 480x480 image.
-        arr = arr[:480, 81:561].copy(order='C')
+        arr = arr[:480, 95:575].copy(order='C')
 
         # Then, we downscale the image to 84x84
         img = pg.image.frombuffer(arr, (480, 480), 'RGB')
@@ -77,7 +80,7 @@ class Controller_AI(Controller):
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
         gray_scale_arr = 0.2989 * r + 0.5870 * g + 0.1140 * b
 
-        return np.array(gray_scale_arr).astype(np.int8)
+        return gray_scale_arr
 
     def action(self):
         self._action_mapping[self._action]()

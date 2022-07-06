@@ -7,6 +7,7 @@ from keras import layers
 import numpy as np
 
 
+
 class DeepQAgent:
     def __init__(self, state_size, action_size):
         # Logging parameters
@@ -205,6 +206,7 @@ class DeepQAgent:
         self._episode_frames = 0
         self._episode_reward = 0
         self._q_action_value_history.clear()
+
 
     @property
     def done(self):
