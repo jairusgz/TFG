@@ -176,11 +176,10 @@ class GameScreen:
                 self.__show_final_screen()
             else:
                 self._surface.fill([87, 72, 0], rect=(PLANET_X, PLANET_Y, PLANET_WIDTH, PLANET_HEIGHT))
-                if not self._ai_player:
-                    self._tv.draw()
-                self._game_manager.run(self._surface)
                 self.__draw_sprites()
                 self.__show_lives()
+                self._game_manager.run(self._surface)
+            self._tv.draw()
             self.__show_score()
             pg.display.flip()
             clock.tick(FPS)

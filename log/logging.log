@@ -1,73 +1,203 @@
-04:36:02 INFO Inicializando aplicacion
-04:36:54 INFO Inicializando aplicacion
-04:38:45 INFO Inicializando aplicacion
-04:39:22 INFO Inicializando aplicacion
-04:41:14 INFO Inicializando aplicacion
-04:42:20 INFO Inicializando aplicacion
-04:42:42 INFO Inicializando aplicacion
-04:43:15 INFO Inicializando aplicacion
-04:43:32 INFO Inicializando aplicacion
-04:43:41 INFO Inicializando aplicacion
-04:44:09 INFO Inicializando aplicacion
-04:48:29 INFO Inicializando aplicacion
-04:49:00 INFO Inicializando aplicacion
-04:49:21 INFO Inicializando aplicacion
-04:49:35 INFO Inicializando aplicacion
-04:49:48 INFO Inicializando aplicacion
-04:52:10 INFO Inicializando aplicacion
-04:54:59 INFO Inicializando aplicacion
-04:55:53 INFO Inicializando aplicacion
-04:56:26 INFO Inicializando aplicacion
-04:56:48 INFO Inicializando aplicacion
-04:57:55 INFO Inicializando aplicacion
-04:58:28 INFO Inicializando aplicacion
-04:58:49 INFO Inicializando aplicacion
-05:01:00 INFO Inicializando aplicacion
-05:01:16 INFO Inicializando aplicacion
-05:02:57 INFO Inicializando aplicacion
-05:11:23 INFO Inicializando aplicacion
-05:11:53 INFO Inicializando aplicacion
-05:13:34 INFO Inicializando aplicacion
-05:14:02 INFO Inicializando aplicacion
-05:14:48 INFO Inicializando aplicacion
-05:34:42 INFO Inicializando aplicacion
-05:35:11 INFO Inicializando aplicacion
-05:40:07 INFO Inicializando aplicacion
-05:43:31 INFO Inicializando aplicacion
-05:44:54 INFO Inicializando aplicacion
-06:00:47 INFO Inicializando aplicacion
-06:04:12 INFO Inicializando aplicacion
-06:04:33 INFO Inicializando aplicacion
-06:05:00 INFO Inicializando aplicacion
-06:08:24 INFO Inicializando aplicacion
-06:08:42 INFO Inicializando aplicacion
-06:12:38 INFO Inicializando aplicacion
-06:13:04 INFO Inicializando aplicacion
-06:13:45 INFO Inicializando aplicacion
-06:20:36 INFO Inicializando aplicacion
-06:23:42 INFO Inicializando aplicacion
-06:24:10 INFO Mean train time: 0.0001
-06:24:10 INFO Mean update time: 0.0575
-06:24:10 INFO Mean preprocess time: 0.0007
-
-06:24:11 DEBUG Mean loss time: 0.0057
-06:24:11 DEBUG Mean backpropagation time: 0.028
-
-06:24:39 INFO Mean train time: 0.0
-06:24:39 INFO Mean update time: 0.0616
-06:24:39 INFO Mean preprocess time: 0.0007
-
-06:24:40 DEBUG Mean loss time: 0.0055
-06:24:40 DEBUG Mean backpropagation time: 0.0254
-
-06:48:04 INFO Inicializando aplicacion
-06:50:46 INFO Inicializando aplicacion
-06:51:11 INFO Inicializando aplicacion
-06:52:11 INFO Inicializando aplicacion
-06:54:19 INFO Inicializando aplicacion
-06:55:01 INFO Inicializando aplicacion
-06:55:13 INFO Inicializando aplicacion
-06:56:10 INFO Inicializando aplicacion
-06:59:47 INFO Inicializando aplicacion
-07:04:49 INFO Inicializando aplicacion
-07:10:54 INFO Inicializando aplicacion
+01:10:20 INFO Inicializando aplicacion
+01:13:47 INFO Inicializando aplicacion
+01:36:06 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:36:07 DEBUG Creating converter from 5 to 3
+01:58:35 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:21:05 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:43:36 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:06:11 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:28:59 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:51:29 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:14:05 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:36:40 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:59:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:21:43 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:44:13 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:06:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:29:21 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:51:56 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:14:32 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:37:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:59:51 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:22:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:45:15 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:07:57 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:30:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:53:27 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:16:15 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:39:03 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:01:55 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:24:49 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:47:43 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:10:35 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:33:30 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:56:27 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:19:23 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:42:17 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:05:15 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:28:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:51:10 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:14:14 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:37:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:00:13 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:23:14 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:46:20 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:09:22 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:32:26 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:55:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:18:40 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:41:46 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:04:51 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:28:03 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:51:11 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:14:22 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:37:32 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:00:43 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:24:07 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:47:17 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:10:17 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:33:24 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:56:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:19:43 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:42:49 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:06:01 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:29:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:52:25 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:15:33 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:38:47 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:02:00 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:25:15 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:48:26 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:11:39 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:34:50 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:57:57 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:21:19 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:44:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:07:45 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:31:03 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:54:18 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:17:36 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:40:47 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:03:55 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:27:05 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:50:21 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:13:37 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:36:55 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:00:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:23:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:46:54 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:10:11 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:33:34 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:56:54 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:20:18 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:43:40 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:06:57 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:30:14 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:53:31 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:16:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:39:57 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:03:12 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:26:21 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:49:33 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:12:47 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:36:00 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:59:11 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:22:21 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:45:30 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:08:38 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:31:51 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:55:07 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:18:25 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:41:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:05:00 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:28:13 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+07:51:27 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:14:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+08:37:55 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:01:02 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:24:15 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+09:47:28 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:10:40 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:33:58 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+10:57:23 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:20:39 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+11:44:03 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:07:26 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:30:47 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+12:54:03 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:17:16 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+01:40:31 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:03:45 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:27:00 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+02:50:18 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:13:28 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:36:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+03:59:53 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:23:06 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+04:46:22 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:09:42 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:32:57 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+05:56:08 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:19:20 WARNING Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+06:59:52 INFO Inicializando aplicacion
+07:01:00 INFO Inicializando aplicacion
+07:01:07 DEBUG Creating converter from 3 to 5
+07:01:07 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+07:01:56 INFO Inicializando aplicacion
+07:02:01 DEBUG Creating converter from 3 to 5
+07:02:01 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+09:36:10 INFO Inicializando aplicacion
+09:36:14 DEBUG Creating converter from 3 to 5
+09:36:15 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+02:05:10 INFO Inicializando aplicacion
+02:05:16 DEBUG Creating converter from 3 to 5
+02:05:16 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+02:05:59 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+01:03:24 INFO Inicializando aplicacion
+01:03:30 DEBUG Creating converter from 3 to 5
+01:03:31 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:43:53 INFO Inicializando aplicacion
+03:43:58 DEBUG Creating converter from 3 to 5
+03:43:58 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+12:29:27 INFO Inicializando aplicacion
+12:29:32 DEBUG Creating converter from 3 to 5
+12:29:32 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+12:31:17 INFO Inicializando aplicacion
+12:31:21 DEBUG Creating converter from 3 to 5
+12:31:21 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:11:41 INFO Inicializando aplicacion
+03:11:46 DEBUG Creating converter from 3 to 5
+03:11:46 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:12:25 INFO Inicializando aplicacion
+03:12:29 DEBUG Creating converter from 3 to 5
+03:12:29 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:13:28 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:13:49 INFO Inicializando aplicacion
+03:13:51 DEBUG Creating converter from 3 to 5
+03:13:51 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:16:47 INFO Inicializando aplicacion
+03:16:49 DEBUG Creating converter from 3 to 5
+03:16:49 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:19:01 INFO Inicializando aplicacion
+03:19:04 DEBUG Creating converter from 3 to 5
+03:19:04 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:23:20 INFO Inicializando aplicacion
+03:23:24 DEBUG Creating converter from 3 to 5
+03:23:24 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:29:10 INFO Inicializando aplicacion
+03:29:13 DEBUG Creating converter from 3 to 5
+03:29:13 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+02:54:00 INFO Inicializando aplicacion
+02:54:26 INFO Inicializando aplicacion
+02:54:31 DEBUG Creating converter from 3 to 5
+02:54:32 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+02:56:29 INFO Inicializando aplicacion
+02:56:32 DEBUG Creating converter from 3 to 5
+02:56:32 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:00:11 INFO Inicializando aplicacion
+03:00:15 DEBUG Creating converter from 3 to 5
+03:00:15 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:01:33 INFO Inicializando aplicacion
+03:02:20 INFO Inicializando aplicacion
+03:06:12 DEBUG Creating converter from 3 to 5
+03:06:12 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.

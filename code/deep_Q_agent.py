@@ -1,6 +1,5 @@
 import csv
 from game_parameters import *
-import time
 import logging
 import tensorflow as tf
 from tensorflow import keras
@@ -9,7 +8,7 @@ import numpy as np
 
 
 class DeepQAgent:
-    def __init__(self, state_size, action_size, load_model=False):
+    def __init__(self, state_size, action_size):
         # Logging parameters
         self._backpropagation_time = []
         self._loss_time = []
@@ -18,10 +17,9 @@ class DeepQAgent:
         self._state_size = state_size
         self._action_size = action_size
         self._new_episode = True
-        self._optimizer = keras.optimizers.RMSprop(learning_rate=0.00025, momentum=0.95)
+        self._optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
         self._done = False
-        self._model_path = '../Data/model.h5'
-        self._optimizer_path = '../Data/optimizer_weights'
+        self._model_path = '../Data/model64.h5'
         self._action = 0
 
         # Experience replay buffers and training parameters
@@ -31,6 +29,7 @@ class DeepQAgent:
         self._rewards_history = []
         self._done_history = []
         self._episode_reward_history = []
+        self._episode_score_history = []
         self._running_reward = 0
         self._episode_count = 0
         self._frame_count = 1
@@ -57,8 +56,12 @@ class DeepQAgent:
         self._objective_reward = 850
         self._max_training_frames = 10000000
 
-        if load_model or not TRAINING_MODE:
-            self.__load_model()
+        # Write headers for csv log
+        with open('../log/episode_log.csv', 'a') as f:
+            datareader = csv.writer(f, lineterminator='\n\r')
+            datareader.writerow(['score', 'episode reward', 'running reward',
+                                 'episode frames', 'total frames', 'Q values'])
+
 
     def __build_model(self):
         # Input layer of shape 84x84
@@ -82,7 +85,7 @@ class DeepQAgent:
 
         return model
 
-    def train(self, state):
+    def choose_action(self, state):
         # Here, state is the last 4 stacked frames of the game
         if not self._done:
 
@@ -101,7 +104,7 @@ class DeepQAgent:
             self._epsilon -= self._epsilon_decay / self._epsilon_greedy_frames
             self._epsilon = max(self._epsilon, self._epsilon_min)
 
-    def update(self, state, action, reward, next_state):
+    def remember(self, state, action, reward, next_state):
         if not self._done:
             self._frame_count += 1
             self._episode_frames += 1
@@ -139,7 +142,6 @@ class DeepQAgent:
 
                 # Create a mask so we only calculate loss on the updated Q-values
                 masks = tf.one_hot(action_sample, self._action_size)
-                start = time.time()
 
                 with tf.GradientTape() as tape:
 
@@ -153,20 +155,9 @@ class DeepQAgent:
                     # Calculate loss between new Q-value and old Q-value
                     loss = self._loss_function(updated_q_values, q_action)
 
-                end = time.time()
-                self._loss_time.append(end-start)
-
                 # Backpropagation
-                start = time.time()
-
                 grads = tape.gradient(loss, self._model.trainable_variables)
                 self._optimizer.apply_gradients(zip(grads, self._model.trainable_variables))
-                if self._load_optimizer:
-                    self._optimizer.set_weights(np.load(self._optimizer_path + '.npy', allow_pickle=True))
-                    self._load_optimizer = False
-
-                end = time.time()
-                self._backpropagation_time.append(end - start)
 
             if self._frame_count % self._update_target_network == 0:
                 # update the the target network with new weights
@@ -186,43 +177,13 @@ class DeepQAgent:
                 self.__save_model()
                 self._done = True
                 exit()
-
-            if self._frame_count % LOG_EVERY == 0:
-                mean_loss_time = round(np.mean(self._loss_time), 4)
-                mean_backpropagation_time = round(np.mean(self._backpropagation_time), 4)
-                self._loss_time.clear()
-                self._backpropagation_time.clear()
-
-                logging.debug(f'Mean loss time: {mean_loss_time}')
-                logging.debug(f'Mean backpropagation time: {mean_backpropagation_time}\n')
+        self._done = False
 
     def __save_model(self):
         self._model.save(self._model_path)
-        np.save(self._optimizer_path, self._optimizer.get_weights())
-        with open('../Data/training_status.csv', 'w') as f:
-            f.write('{}, {}, {}'.format(self._epsilon, self._episode_count, self._frame_count))
 
-    def __write_history(self, history, path):
-        with open(path, "a") as file:
-            for item in history:
-                file.write("{}\n".format(item))
-
-    def write_history_results(self):
-        pass
-
-    def __load_model(self):
-        self._model = tf.keras.models.load_model(self._model_path)
-        self._target_model = tf.keras.models.load_model(self._model_path)
-        self._target_model.set_weights(self._model.get_weights())
-        self._load_optimizer = True
-        with open('../Data/training_status.csv') as f:
-            data = f.readlines()
-            self._epsilon = float(data[0].split(',')[0])
-            self._episode_count = int(data[0].split(',')[1])
-            self._frame_count = int(data[0].split(',')[2])
-
-    def new_episode(self):
-
+    def new_episode(self, score):
+        self._done = True
         # Update running reward to check condition for solving
         self._episode_reward_history.append(self._episode_reward)
         if len(self._episode_reward_history) > 100:
@@ -231,11 +192,13 @@ class DeepQAgent:
 
         with open('../log/episode_log.csv', 'a') as f:
             datareader = csv.writer(f, lineterminator='\n\r')
-            datareader.writerow([self._episode_reward, self._episode_frames, np.mean(self._q_action_value_history)])
+            datareader.writerow([score, self._episode_reward, self._running_reward,
+                                 self._episode_frames, self._frame_count, np.mean(self._q_action_value_history)])
 
-        print(f'Episode: {self._episode_count}, reward: {self._episode_reward}, '
+            print(f'{self._episode_count}: score: {score}, reward: {self._episode_reward}, '
               f'running reward: {self._running_reward}, frames: '
-              f'{self._episode_frames}, total frames: {self._frame_count}')
+              f'{self._episode_frames}, total: {self._frame_count}, '
+              f'Q-value: {round(np.mean(self._q_action_value_history), 2)}')
 
         self._episode_count += 1
         self._new_episode = False
