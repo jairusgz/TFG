@@ -1,12 +1,9 @@
-import PIL.Image
-import keras.backend
 import numpy as np
 from player import *
 from deep_Q_agent import DeepQAgent
 import tensorflow as tf
 from tensorflow import keras
-from PIL import Image
-from keras import models
+
 
 class Controller:
     def __init__(self, player):

@@ -1,5 +1,3 @@
-import pygame.sprite
-
 from obstacle import Block
 from controller import *
 from laser import Laser
@@ -7,6 +5,7 @@ from game_parameters import *
 from alien import *
 from random import choice, randint
 from leaderboard_manager import *
+import pygame
 import time
 
 
