@@ -404,3 +404,16 @@
 06:46:52 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
 07:33:54 INFO Inicializando aplicacion
 07:34:12 INFO Inicializando aplicacion
+08:58:31 INFO Inicializando aplicacion
+08:58:33 DEBUG Creating converter from 3 to 5
+08:58:33 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+08:58:54 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+08:59:25 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+10:58:57 INFO Inicializando aplicacion
+10:59:00 DEBUG Creating converter from 3 to 5
+10:59:00 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+10:59:20 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+10:59:54 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.
+03:51:08 INFO Inicializando aplicacion
+03:51:11 DEBUG Creating converter from 3 to 5
+03:51:11 WARNING No training configuration found in the save file, so the model was *not* compiled. Compile it manually.

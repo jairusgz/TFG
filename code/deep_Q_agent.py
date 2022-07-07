@@ -20,7 +20,7 @@ class DeepQAgent:
         self._new_episode = True
         self._optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
         self._done = False
-        self._model_path = '../Data/model64.h5'
+        self._model_path = '../Data/model.h5'
         self._action = 0
 
         # Experience replay buffers and training parameters
@@ -36,10 +36,10 @@ class DeepQAgent:
         self._frame_count = 1
         self._episode_frames = 1
         self._epsilon_random_frames = 12000
-        self._epsilon_greedy_frames = 520000.0
+        self._epsilon_greedy_frames = 250000.0
         self._max_memory_length = 12000
         self._update_after_actions = 4
-        self._update_target_network = 10000
+        self._update_target_network = 2500
         self._loss_function = keras.losses.Huber()
 
         # Build the model
@@ -54,7 +54,7 @@ class DeepQAgent:
         self._result_history = {'episode_reward': [], 'frame_count': [], 'mean_Q_action_value': []}
         self._q_action_value_history = []
         self._load_optimizer = False
-        self._objective_reward = 850
+        self._objective_reward = 100
         self._max_training_frames = 10000000
 
         # Write headers for csv log

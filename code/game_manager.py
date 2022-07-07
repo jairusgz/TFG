@@ -164,6 +164,7 @@ class GameManager:
             self._mothership.update()
 
             self._alien_lasers.update()
+            self._clipped_reward -= 0.001
             if self._ai_player:
                 self._controller.stack_frame(pg.surfarray.array3d(surface), self._clipped_reward)
                 if self._game_status == Game_status.GAME_OVER:
@@ -259,7 +260,7 @@ class GameManager:
                     alien_collisions[0].kill()
                     laser.kill()
                     self._speed_modifier *= SPEED_INCREMENT
-                    self._clipped_reward += 1
+                    self._clipped_reward += alien_collisions[0].value / 100
                     if self._alien_direction < 0:
                         self._alien_direction = - ALIEN_X_SPEED * self._speed_modifier
                     else:
@@ -298,6 +299,7 @@ class GameManager:
 
                     if self._lives > 1:
                         self._lives -= 1
+                        self._clipped_reward -= 0.3
                     else:
                         if not TRAINING_MODE:
                             self._music.stop()
