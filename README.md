@@ -15,5 +15,5 @@
   - $pip install -r requirements.txt
 
 - ### Ejecución
-  - $python3 GUI.py
+  - $python3 code/GUI.py
 
